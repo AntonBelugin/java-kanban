@@ -121,6 +121,11 @@ public class TaskManager {
 
     public void clearSubtasks() {
         subtasks.clear();
+        for (Epic epic: epics.values()) {
+            epic.status = Status.NEW;
+            epic.subtasksEpic.clear();
+        }
+
     }
 
     public Subtask getIdSubtask(int id) {
