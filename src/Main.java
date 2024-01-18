@@ -28,10 +28,17 @@ public class Main {
         System.out.println(taskManager.getSubtasksEpic(3));
         System.out.println();
 
+        Task task = taskManager.getTaskById(2);
+        task.name =
+        epic.name = "Генеральная уборка";
+        taskManager.updateEpic(updateEpic);
         taskManager.updateTask(2, new Task("Пропылесосить и помыть",
                 "пропылесосить все комнаты"), TaskStatus.IN_PROGRESS);
-        taskManager.updateEpic(4, new Epic("Генеральная уборка",
-                "Убраться в новой квартире"));
+
+        Epic epic = taskManager.getEpicById(4);
+        epic.name = "Генеральная уборка";
+        taskManager.updateEpic(new Epic(4, "Генеральная уборка", "пропылесосить все комнаты"));
+
         taskManager.updateSubtask(5, new Subtask("Собрать коробки",
                 "собрать в коробки вещи"), TaskStatus.IN_PROGRESS);
 

@@ -22,7 +22,7 @@ public class TaskManager {
 
     private int generateId() { return ++id; }
 
-    // Методы для Task.Task
+    // Методы для Task
 
     public Task makeTask(Task task) {
         task.setId(generateId());
@@ -48,22 +48,21 @@ public class TaskManager {
         saved.name = task.name;
         saved.description = task.description;
         saved.setTaskStatus(task.getTaskStatus());
-        updateTask.id = id;
-        updateTask.taskStatus = taskStatus;
-        tasks.put(updateTask.getId(), updateTask);
+        tasks.put(task.getId(), saved);
     }
 
     public void deleteTask(int id) {
         tasks.remove(id);
     }
 
-    // Методы для Task.Epic
-    public void makeEpic(Epic epic) {
-        epic.id = id;
-        epic.taskStatus = TaskStatus.NEW;
-        epics.put(id, epic);
-        id +=1;
+    // Методы для Epic
+    public Epic makeEpic(Epic epic) {
+        epic.setId(generateId());
+        epic.setTaskStatus(TaskStatus.NEW);
+        epics.put(epic.getId(), epic);
+        return epic;
     }
+
     public ArrayList<Epic> getEpics() {
         return new ArrayList<>(epics.values());
     }
@@ -76,12 +75,11 @@ public class TaskManager {
         return epics.get(id);
     }
 
-    public void updateEpic(int id, Epic updateEpic) {
-        ArrayList<Subtask> tempList = epics.get(id).epicSubtasks;
-        updateEpic.id = id;
-        updateEpic.epicSubtasks = tempList;
-        updateEpic.taskStatus = countStatus(updateEpic);
-        epics.put(updateEpic.getId(), updateEpic);
+    public void updateEpic(Epic epic) {
+        Epic saved = epics.get(epic.getId());
+        saved.name = epic.name;
+        saved.description = epic.description;
+        epics.put(epic.getId(), saved);
     }
 
     public void deleteEpic(int id) {

@@ -40,7 +40,7 @@ public class Task {
         return Objects.hash(id);
     }
 
-    public Task.TaskStatus getTaskStatus() {
+    public TaskStatus getTaskStatus() {
         return taskStatus;
     }
 
