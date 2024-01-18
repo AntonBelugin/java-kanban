@@ -1,6 +1,8 @@
+package Task;
+
 public class Subtask extends Task {
-    int epicId;
-    public Status status;
+    public int epicId;
+    private TaskStatus taskStatus;
     public Subtask(String name, String description) {
         super(name, description);
     }
@@ -11,7 +13,15 @@ public class Subtask extends Task {
                 ", Эпик №: " + epicId +
                 ", Название: " + name +
                 ", Описание: " + description +
-                ", Статус: " + status +
+                ", Статус: " + taskStatus +
                 '.';
+    }
+
+    public Task.TaskStatus getTaskStatus() {
+        return taskStatus;
+    }
+
+    public void setTaskStatus(Task.TaskStatus taskStatus) {
+        this.taskStatus = taskStatus;
     }
 }

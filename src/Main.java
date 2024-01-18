@@ -1,3 +1,9 @@
+import Service.TaskManager;
+import Task.Epic;
+import Task.TaskStatus;
+import Task.Task;
+import Task.Subtask;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -18,48 +24,48 @@ public class Main {
 
         System.out.println(taskManager.getTasks());
         System.out.println(taskManager.getEpics());
-        System.out.println(taskManager.getSubtasks());
+        System.out.println(taskManager.getSubtaskById());
         System.out.println(taskManager.getSubtasksEpic(3));
         System.out.println();
 
         taskManager.updateTask(2, new Task("Пропылесосить и помыть",
-                "пропылесосить все комнаты"), Status.IN_PROGRESS);
+                "пропылесосить все комнаты"), TaskStatus.IN_PROGRESS);
         taskManager.updateEpic(4, new Epic("Генеральная уборка",
                 "Убраться в новой квартире"));
         taskManager.updateSubtask(5, new Subtask("Собрать коробки",
-                "собрать в коробки вещи"), Status.IN_PROGRESS);
+                "собрать в коробки вещи"), TaskStatus.IN_PROGRESS);
 
         System.out.println(taskManager.getTasks());
         System.out.println(taskManager.getEpics());
-        System.out.println(taskManager.getSubtasks());
+        System.out.println(taskManager.getSubtaskById());
         System.out.println(taskManager.getSubtasksEpic(3));
         System.out.println();
 
-        taskManager.updateTask(2, taskManager.getIdTask(2), Status.DONE);
-        taskManager.updateSubtask(5, taskManager.getIdSubtask(5), Status.DONE);
-        taskManager.updateSubtask(6, taskManager.getIdSubtask(6), Status.IN_PROGRESS);
+        taskManager.updateTask(2, taskManager.getTaskById(2), TaskStatus.DONE);
+        taskManager.updateSubtask(5, taskManager.getIdSubtask(5), TaskStatus.DONE);
+        taskManager.updateSubtask(6, taskManager.getIdSubtask(6), TaskStatus.IN_PROGRESS);
         taskManager.updateEpic(4, new Epic("Генеральная уборка",
                 "Убраться в новой квартире 2 раза"));
 
         System.out.println(taskManager.getTasks());
         System.out.println(taskManager.getEpics());
-        System.out.println(taskManager.getSubtasks());
+        System.out.println(taskManager.getSubtaskById());
         System.out.println(taskManager.getSubtasksEpic(3));
         System.out.println();
 
-        taskManager.updateTask(2, taskManager.getIdTask(2), Status.DONE);
-        taskManager.updateSubtask(5, taskManager.getIdSubtask(5), Status.DONE);
-        taskManager.updateSubtask(6, taskManager.getIdSubtask(6), Status.DONE);
-        taskManager.updateSubtask(7, taskManager.getIdSubtask(7), Status.DONE);
+        taskManager.updateTask(2, taskManager.getTaskById(2), TaskStatus.DONE);
+        taskManager.updateSubtask(5, taskManager.getIdSubtask(5), TaskStatus.DONE);
+        taskManager.updateSubtask(6, taskManager.getIdSubtask(6), TaskStatus.DONE);
+        taskManager.updateSubtask(7, taskManager.getIdSubtask(7), TaskStatus.DONE);
 
         System.out.println(taskManager.getTasks());
         System.out.println(taskManager.getEpics());
-        System.out.println(taskManager.getSubtasks());
+        System.out.println(taskManager.getSubtaskById());
         System.out.println(taskManager.getSubtasksEpic(3));
         System.out.println();
 
         taskManager.deleteSubtask(7);
-        System.out.println(taskManager.getIdEpic(4));
+        System.out.println(taskManager.getEpicById(4));
         System.out.println();
 
         taskManager.deleteTask(2);
@@ -67,14 +73,14 @@ public class Main {
 
         System.out.println(taskManager.getTasks());
         System.out.println(taskManager.getEpics());
-        System.out.println(taskManager.getSubtasks());
+        System.out.println(taskManager.getSubtaskById());
         System.out.println(taskManager.getSubtasksEpic(3));
         System.out.println();
 
         taskManager.clearSubtasks();
 
         System.out.println(taskManager.getEpics());
-        System.out.println(taskManager.getSubtasks());
+        System.out.println(taskManager.getSubtaskById());
 
     }
 }

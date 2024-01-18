@@ -1,10 +1,12 @@
+package Task;
+
 import java.util.Objects;
 
 public class Task {
-    public int id;
+    protected int id;
     public String name;
     public String description;
-    public Status status;
+    private TaskStatus taskStatus;
 
     public Task(String name, String description) {
         this.id = 0;
@@ -17,7 +19,7 @@ public class Task {
         return "Задача №: " + id +
                 " Наименование: " + name +
                 ", Описание: " + description +
-                ", Статус: " + status +
+                ", Статус: " + taskStatus +
                 ".";
     }
 
@@ -36,5 +38,17 @@ public class Task {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public Task.TaskStatus getTaskStatus() {
+        return taskStatus;
+    }
+
+    public void setTaskStatus(TaskStatus taskStatus) {
+        this.taskStatus = taskStatus;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
