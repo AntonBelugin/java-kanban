@@ -1,26 +1,26 @@
-package Service;
+package service;
 
-import Task.TaskStatus;
-import Task.Subtask;
-import Task.Task;
-import Task.Epic;
+import task.TaskStatus;
+import task.Subtask;
+import task.Task;
+import task.Epic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TaskManager {
     private int id = 0;
-    HashMap<Integer, Task> tasks;
-    HashMap<Integer, Epic> epics;
-    HashMap<Integer, Subtask> subtasks;
+    private Map<Integer, Task> tasks;
+    private Map<Integer, Epic> epics;
+    private Map<Integer, Subtask> subtasks;
 
     public TaskManager() {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
     }
-
-    private int generateId() { return ++id; }
 
     // Методы для Task
 
@@ -31,7 +31,7 @@ public class TaskManager {
         return task;
     }
 
-    public ArrayList<Task> getTasks() {
+    public List<Task> getTasks() {
         return new ArrayList<>(tasks.values());
     }
 
@@ -63,7 +63,7 @@ public class TaskManager {
         return epic;
     }
 
-    public ArrayList<Epic> getEpics() {
+    public List<Epic> getEpics() {
         return new ArrayList<>(epics.values());
     }
 
@@ -86,38 +86,6 @@ public class TaskManager {
         epics.remove(id);
     }
 
-    //Метод для рассчета статуса Epic
-
-    private TaskStatus countStatus(Epic epic) {
-        ArrayList<Subtask> subtasksEpic = epic.epicSubtasks;
-        if (subtasksEpic.isEmpty()) {
-            return TaskStatus.NEW;
-        } else {
-            int statusNew = 0;
-            int statusDone = 0;
-            int statusIn_progress = 0;
-            for (Subtask subtask: subtasksEpic) {
-                switch (subtask.getTaskStatus()) {
-                    case NEW:
-                        statusNew +=1;
-                        break;
-                    case DONE:
-                        statusDone +=1;
-                        break;
-                    case IN_PROGRESS:
-                        statusIn_progress +=1;
-                        break;
-                }
-            }
-            if (statusDone < 1 && statusIn_progress < 1) {
-                return TaskStatus.NEW;
-            } else if (statusNew < 1 && statusIn_progress < 1) {
-                return TaskStatus.DONE;
-            } else {
-                return TaskStatus.IN_PROGRESS;
-            }
-        }
-    }
 
     // Методы для Task.Subtask
     public Subtask makeSubtask(Subtask subtask) {
@@ -131,7 +99,7 @@ public class TaskManager {
         return subtask;
     }
 
-    public ArrayList<Subtask> getSubtasks() {
+    public List<Subtask> getSubtasks() {
         return new ArrayList<>(subtasks.values());
     }
 
@@ -165,7 +133,41 @@ public class TaskManager {
         epic.setTaskStatus(countStatus(epic));
         epics.put(epic.getId(), epic);
     }
-    public ArrayList<Subtask> getSubtasksByEpic(int id) {
+    public List<Subtask> getSubtasksByEpic(int id) {
         return getEpicById(id).epicSubtasks;
+    }
+
+    private int generateId() { return ++id; }
+
+    //Метод для рассчета статуса Epic
+    private TaskStatus countStatus(Epic epic) {
+        List<Subtask> subtasksEpic = epic.epicSubtasks;
+        if (subtasksEpic.isEmpty()) {
+            return TaskStatus.NEW;
+        } else {
+            int statusNew = 0;
+            int statusDone = 0;
+            int statusIn_progress = 0;
+            for (Subtask subtask: subtasksEpic) {
+                switch (subtask.getTaskStatus()) {
+                    case NEW:
+                        statusNew +=1;
+                        break;
+                    case DONE:
+                        statusDone +=1;
+                        break;
+                    case IN_PROGRESS:
+                        statusIn_progress +=1;
+                        break;
+                }
+            }
+            if (statusDone < 1 && statusIn_progress < 1) {
+                return TaskStatus.NEW;
+            } else if (statusNew < 1 && statusIn_progress < 1) {
+                return TaskStatus.DONE;
+            } else {
+                return TaskStatus.IN_PROGRESS;
+            }
+        }
     }
 }

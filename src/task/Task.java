@@ -1,4 +1,4 @@
-package Task;
+package task;
 
 import java.util.Objects;
 
@@ -6,7 +6,7 @@ public class Task {
     protected int id;
     public String name;
     public String description;
-    private TaskStatus taskStatus;
+    protected TaskStatus taskStatus;
 
     public Task(String name, String description) {
         this.name = name;

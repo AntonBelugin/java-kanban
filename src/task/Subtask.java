@@ -1,30 +1,32 @@
-package Task;
+package task;
 
-import java.util.ArrayList;
+public class Subtask extends Task {
+    private final Epic epic;
 
-public class Epic extends Task {
-    public ArrayList<Subtask> epicSubtasks;
-    private TaskStatus taskStatus;
-
-    public Epic(String name, String description) {
+    public Subtask(Epic epic, String name, String description) {
         super(name, description);
-        epicSubtasks = new ArrayList<>();
+        this.epic = epic;
     }
 
     @Override
     public String toString() {
-        return "Эпик №: " + id +
+        return "Субзадача №: " + id +
+                ", Эпик №: " + epic.id +
                 ", Название: " + name +
                 ", Описание: " + description +
                 ", Статус: " + taskStatus +
                 '.';
     }
 
-   public TaskStatus getTaskStatus() {
+    public TaskStatus getTaskStatus() {
         return taskStatus;
     }
 
     public void setTaskStatus(TaskStatus taskStatus) {
         this.taskStatus = taskStatus;
+    }
+
+    public Epic getEpic() {
+        return epic;
     }
 }
