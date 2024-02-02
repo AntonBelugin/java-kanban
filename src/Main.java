@@ -1,6 +1,6 @@
+import service.Managers;
 import service.TaskManager;
 import task.Epic;
-import task.TaskStatus;
 import task.Task;
 import task.Subtask;
 
@@ -8,7 +8,10 @@ public class Main {
 
     public static void main(String[] args) {
 
-        TaskManager taskManager = new TaskManager();
+        Managers managers = new Managers();
+        TaskManager taskManager = managers.getDefault();
+
+       // TaskManager taskManager = new TaskManager();
         System.out.println("Поехали!");
 
         taskManager.makeTask(new Task( "Помыть посуду", "помыть посуду горячей водой"));
@@ -31,7 +34,12 @@ public class Main {
         System.out.println(taskManager.getSubtaskById(5));
         System.out.println(taskManager.getSubtasksByEpic(3));
         System.out.println();
+        taskManager.getTaskById(2);
+        System.out.println(managers.getDefaultHistory());;
 
+
+
+/*
         Task task = taskManager.getTaskById(2);
         task.name = "Пропылесосить и помыть";
         task.setTaskStatus(TaskStatus.IN_PROGRESS);
@@ -104,6 +112,6 @@ public class Main {
 
         System.out.println(taskManager.getEpics());
         System.out.println(taskManager.getSubtasks());
-
+*/
     }
 }
