@@ -7,8 +7,7 @@ import java.util.List;
 public class InMemoryHistoryManager implements HistoryManager {
 
     private int sizeHistoryView = 10;
-
-    public List<Task> historyView = new ArrayList<>(10);
+    public List<Task> historyView = new ArrayList<>(sizeHistoryView);
 
     @Override
     public void addHistoryView(Task task) {
@@ -21,7 +20,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public List<Task> getHistory() {
+    public List<Task> getHistoryList() {
         return historyView;
     }
 

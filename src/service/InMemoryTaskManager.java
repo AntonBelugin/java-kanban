@@ -9,21 +9,22 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 0;
-   // private int sizeHistoryView = 10;
     private Map<Integer, Task> tasks;
     private Map<Integer, Epic> epics;
     private Map<Integer, Subtask> subtasks;
-    public HistoryManager historyStorage;
-    //public List<Task> historyView;
+    private HistoryManager historyStorage;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
         this.historyStorage = historyManager;
-        //this.historyView = new ArrayList<>(10);
     }
 
+    @Override
+    public HistoryManager getHistory() {
+        return historyStorage;
+    }
 
     // Методы для Task
 
@@ -104,6 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     // Методы для Task.Subtask
+
     @Override
     public Subtask makeSubtask(Subtask subtask) {
         subtask.setId(generateId());
@@ -128,7 +130,6 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setTaskStatus(TaskStatus.NEW);
             epic.epicSubtasks.clear();
         }
-
     }
 
     @Override
@@ -156,15 +157,11 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setTaskStatus(countStatus(epic));
         epics.put(epic.getId(), epic);
     }
+
     @Override
     public List<Subtask> getSubtasksByEpic(int id) {
         return getEpicById(id).epicSubtasks;
     }
-
-   /* @Override
-    public List<Task> getHistory() {
-        return historyView;
-    }*/
 
     private int generateId() { return ++id; }
 
@@ -199,16 +196,4 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
     }
-
-    // метод обновления historyView
-  /*  private void addHistoryView(Task task) {
-        if (historyView.size() < sizeHistoryView) {
-            historyView.add(task);
-        } else {
-            historyView.remove(0);
-            historyView.add(task);
-        }
-    }*/
-
-
 }
