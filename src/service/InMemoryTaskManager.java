@@ -12,18 +12,18 @@ public class InMemoryTaskManager implements TaskManager {
     private Map<Integer, Task> tasks;
     private Map<Integer, Epic> epics;
     private Map<Integer, Subtask> subtasks;
-    private HistoryManager historyStorage;
+    private HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
-        this.historyStorage = historyManager;
+        this.historyManager = historyManager;
     }
 
     @Override
-    public HistoryManager getHistory() {
-        return historyStorage;
+    public List<Task> getHistory() {
+        return historyManager.getHistoryList();
     }
 
     // Методы для Task
@@ -47,7 +47,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        historyStorage.addHistoryView(tasks.get(id));
+        historyManager.addHistoryView(tasks.get(id));
         return tasks.get(id);
     }
 
@@ -86,7 +86,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(int id) {
-        historyStorage.addHistoryView(epics.get(id));
+        historyManager.addHistoryView(epics.get(id));
         return epics.get(id);
     }
 
@@ -134,7 +134,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtaskById(int id) {
-        historyStorage.addHistoryView(subtasks.get(id));
+        historyManager.addHistoryView(subtasks.get(id));
         return subtasks.get(id);
     }
 

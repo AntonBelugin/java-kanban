@@ -6,12 +6,12 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private int sizeHistoryView = 10;
-    public List<Task> historyView = new ArrayList<>(sizeHistoryView);
+    private int historySize = 10;
+    public List<Task> historyView = new ArrayList<>(historySize);
 
     @Override
     public void addHistoryView(Task task) {
-        if (historyView.size() < sizeHistoryView) {
+        if (historyView.size() < historySize) {
             historyView.add(task);
         } else {
             historyView.remove(0);
