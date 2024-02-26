@@ -40,7 +40,6 @@ public class Main {
               "собрать в коробки вещи"));
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);
-        taskManager.getTaskById(1);
         taskManager.getEpicById(4);
         taskManager.getTaskById(2);
         taskManager.getTaskById(2);
