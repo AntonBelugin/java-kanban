@@ -10,13 +10,14 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     Node first;
     Node last;
-    Map <Integer, Node> nodeMap = new HashMap<>();
+    Map<Integer, Node> nodeMap = new HashMap<>();
 
     private static class Node {
         Task item;
         Node next;
         Node prev;
-        Node (Node prev, Task element, Node next) {
+
+        Node(Node prev, Task element, Node next) {
             this.item = element;
             this.prev = prev;
             this.next = next;
@@ -30,6 +31,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         linkLast(task);
     }
+
     @Override
     public void removeNode(int id) {
         Node curNode = nodeMap.get(id);
