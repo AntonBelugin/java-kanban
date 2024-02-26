@@ -21,19 +21,34 @@ public class Main {
 
         taskManager.makeSubtask(new Subtask(taskManager.getEpicById(3), "Собрать коробки",
                 "собрать в коробки вещи"));
-        taskManager.makeSubtask(new Subtask(taskManager.getEpicById(3), "Упаковать кошку",
+        taskManager.getEpicById(3);
+        taskManager.makeSubtask(new Subtask(taskManager.getEpicById(4), "Упаковать кошку",
                 "не забыть лоток"));
-        taskManager.makeSubtask(new Subtask(taskManager.getEpicById(4),"Пропылесосить коридор",
+        taskManager.getEpicById(3);
+        taskManager.makeSubtask(new Subtask(taskManager.getEpicById(3),"Пропылесосить коридор",
                 "2 раза"));
 
-        System.out.println(taskManager.getTasks());
+       /* System.out.println(taskManager.getTasks());
         System.out.println(taskManager.getEpics());
         System.out.println(taskManager.getEpicById(3));
         System.out.println(taskManager.getSubtasks());
         System.out.println(taskManager.getSubtaskById(5));
         System.out.println(taskManager.getSubtasksByEpic(3));
-        System.out.println();
+        System.out.println();*/
         taskManager.getTaskById(2);
+        taskManager.makeSubtask(new Subtask(taskManager.getEpicById(3), "Собрать коробки",
+              "собрать в коробки вещи"));
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(1);
+        taskManager.getEpicById(4);
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(1);
+        taskManager.getEpicById(3);
+        taskManager.getTaskById(1);
+        taskManager.getEpicById(3);
+        taskManager.deleteEpic(4);
 
         for (Task task: taskManager.getHistory()) {
             System.out.println(task);
