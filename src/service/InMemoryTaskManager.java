@@ -37,7 +37,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getTasks() { return new ArrayList<>(tasks.values()); }
+    public List<Task> getTasks() {
+        return new ArrayList<>(tasks.values());
+    }
 
     @Override
     public void clearTasks() {
@@ -177,7 +179,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             int statusNew = 0;
             int statusDone = 0;
-            int statusIn_progress = 0;
+            int statusInProgress = 0;
             for (Subtask subtask: subtasksEpic) {
                 switch (subtask.getTaskStatus()) {
                     case NEW:
@@ -187,13 +189,13 @@ public class InMemoryTaskManager implements TaskManager {
                         statusDone += 1;
                         break;
                     case IN_PROGRESS:
-                        statusIn_progress += 1;
+                        statusInProgress += 1;
                         break;
                 }
             }
-            if (statusDone < 1 && statusIn_progress < 1) {
+            if (statusDone < 1 && statusInProgress < 1) {
                 return TaskStatus.NEW;
-            } else if (statusNew < 1 && statusIn_progress < 1) {
+            } else if (statusNew < 1 && statusInProgress < 1) {
                 return TaskStatus.DONE;
             } else {
                 return TaskStatus.IN_PROGRESS;
