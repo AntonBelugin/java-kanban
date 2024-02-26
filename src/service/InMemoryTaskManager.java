@@ -37,8 +37,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getTasks() { return new ArrayList<>(tasks.values());
-    }
+    public List<Task> getTasks() { return new ArrayList<>(tasks.values()); }
 
     @Override
     public void clearTasks() {
@@ -166,7 +165,9 @@ public class InMemoryTaskManager implements TaskManager {
         return getEpicById(id).epicSubtasks;
     }
 
-    private int generateId() { return ++id; }
+    private int generateId() {
+        return ++id;
+    }
 
     //Метод для рассчета статуса Epic
     private TaskStatus countStatus(Epic epic) {
@@ -180,13 +181,13 @@ public class InMemoryTaskManager implements TaskManager {
             for (Subtask subtask: subtasksEpic) {
                 switch (subtask.getTaskStatus()) {
                     case NEW:
-                        statusNew +=1;
+                        statusNew += 1;
                         break;
                     case DONE:
-                        statusDone +=1;
+                        statusDone += 1;
                         break;
                     case IN_PROGRESS:
-                        statusIn_progress +=1;
+                        statusIn_progress += 1;
                         break;
                 }
             }
