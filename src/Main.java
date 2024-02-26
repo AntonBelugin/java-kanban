@@ -13,8 +13,8 @@ public class Main {
 
         System.out.println("Поехали!");
 
-        taskManager.makeTask(new Task( "Помыть посуду", "помыть посуду горячей водой"));
-        taskManager.makeTask(new Task( "Пропылесосить", "пропылесосить все комнаты"));
+        taskManager.makeTask(new Task("Помыть посуду", "помыть посуду горячей водой"));
+        taskManager.makeTask(new Task("Пропылесосить", "пропылесосить все комнаты"));
 
         taskManager.makeEpic(new Epic("Переезд", "Переехать в другую квартиру"));
         taskManager.makeEpic(new Epic("Уборка", "Убраться в новой квартире"));
