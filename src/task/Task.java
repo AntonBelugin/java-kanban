@@ -47,7 +47,13 @@ public class Task {
         this.taskStatus = taskStatus;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public void setId(int id) { this.id = id; }
+
+      /* Так можно защитить изменение id?
+       if (this.id == 0) {
+            this.id = id;
+        } else {
+            return;
+        }*/
+
 }

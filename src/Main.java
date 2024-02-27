@@ -42,16 +42,27 @@ public class Main {
         taskManager.getTaskById(1);
         taskManager.getEpicById(4);
         taskManager.getTaskById(2);
+
+        for (Task task: taskManager.getHistory()) {
+            System.out.println(task);
+        }
+        System.out.println();
+
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);
         taskManager.getEpicById(3);
-        taskManager.getTaskById(1);
+        taskManager.deleteTask(1);
+        for (Task task: taskManager.getHistory()) {
+            System.out.println(task);
+        }
+        System.out.println();
+
         taskManager.getEpicById(3);
         taskManager.deleteEpic(4);
 
         for (Task task: taskManager.getHistory()) {
             System.out.println(task);
         }
-
+        System.out.println();
     }
 }

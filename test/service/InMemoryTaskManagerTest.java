@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-import task.TaskStatus;
 
 class InMemoryTaskManagerTest {
     Managers managers = new Managers();
@@ -22,5 +21,18 @@ class InMemoryTaskManagerTest {
         Assertions.assertEquals(task, taskManager.getTaskById(1));
         Assertions.assertEquals(epic, taskManager.getEpicById(2));
         Assertions.assertEquals(subtask, taskManager.getSubtaskById(3));
+
+        task.setId(2);
+        Assertions.assertEquals(2, task.getId());
+    }
+
+    @Test
+    void shouldInMemoryHistoryManagerWork() {
+        Task task = taskManager.makeTask(new Task( "Помыть посуду",
+                "помыть посуду горячей водой"));
+        taskManager.getTaskById(1);
+        Assertions.assertEquals(task, taskManager.getHistory().get(0));
+        taskManager.deleteTask(1);
+        Assertions.assertEquals(0, taskManager.getHistory().size());
     }
     }

@@ -1,16 +1,14 @@
 package service;
 
 import task.Task;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
+
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    Node first;
-    Node last;
-    Map<Integer, Node> nodeMap = new HashMap<>();
+    private Node first;
+    private Node last;
+    private Map<Integer, Node> nodeMap = new HashMap<>();
 
     private static class Node {
         Task item;
@@ -21,6 +19,19 @@ public class InMemoryHistoryManager implements HistoryManager {
             this.item = element;
             this.prev = prev;
             this.next = next;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node node = (Node) o;
+            return Objects.equals(item, node.item) && Objects.equals(next, node.next) && Objects.equals(prev, node.prev);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(item, next, prev);
         }
     }
 
