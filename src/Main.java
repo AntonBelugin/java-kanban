@@ -40,6 +40,9 @@ public class Main {
               "собрать в коробки вещи"));
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);
+        taskManager.getSubtaskById(5);
+        taskManager.getSubtaskById(6);
+        taskManager.getSubtaskById(7);
         taskManager.getEpicById(4);
         taskManager.getTaskById(2);
 
@@ -51,18 +54,22 @@ public class Main {
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);
         taskManager.getEpicById(3);
+        taskManager.deleteEpic(3);
         taskManager.deleteTask(1);
-        for (Task task: taskManager.getHistory()) {
-            System.out.println(task);
-        }
-        System.out.println();
-
-        taskManager.getEpicById(3);
-        taskManager.deleteEpic(4);
+        //taskManager.deleteEpic(3);
 
         for (Task task: taskManager.getHistory()) {
             System.out.println(task);
         }
         System.out.println();
+
+
+        //taskManager.deleteEpic(4);
+
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task);
+        }
+        System.out.println();
+
     }
 }
