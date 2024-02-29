@@ -1,4 +1,3 @@
-import service.InMemoryHistoryManager;
 import service.Managers;
 import service.TaskManager;
 import task.Epic;
@@ -56,6 +55,7 @@ public class Main {
         printHistory(taskManager);
 
     }
+
     private static void printHistory(TaskManager taskManager) {
         for (Task task : taskManager.getHistory()) {
             System.out.println(task);
