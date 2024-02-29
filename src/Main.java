@@ -1,3 +1,4 @@
+import service.InMemoryHistoryManager;
 import service.Managers;
 import service.TaskManager;
 import task.Epic;
@@ -28,13 +29,6 @@ public class Main {
         taskManager.makeSubtask(new Subtask(taskManager.getEpicById(3),"Пропылесосить коридор",
                 "2 раза"));
 
-       /* System.out.println(taskManager.getTasks());
-        System.out.println(taskManager.getEpics());
-        System.out.println(taskManager.getEpicById(3));
-        System.out.println(taskManager.getSubtasks());
-        System.out.println(taskManager.getSubtaskById(5));
-        System.out.println(taskManager.getSubtasksByEpic(3));
-        System.out.println();*/
         taskManager.getTaskById(2);
         taskManager.makeSubtask(new Subtask(taskManager.getEpicById(3), "Собрать коробки",
               "собрать в коробки вещи"));
@@ -46,30 +40,26 @@ public class Main {
         taskManager.getEpicById(4);
         taskManager.getTaskById(2);
 
-        for (Task task: taskManager.getHistory()) {
-            System.out.println(task);
-        }
-        System.out.println();
+        printHistory(taskManager);
 
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);
         taskManager.getEpicById(3);
+        taskManager.deleteEpic(4);
+        taskManager.deleteSubtask(7);
+
+        printHistory(taskManager);
+
         taskManager.deleteEpic(3);
         taskManager.deleteTask(1);
-        //taskManager.deleteEpic(3);
 
-        for (Task task: taskManager.getHistory()) {
-            System.out.println(task);
-        }
-        System.out.println();
+        printHistory(taskManager);
 
-
-        //taskManager.deleteEpic(4);
-
+    }
+    private static void printHistory(TaskManager taskManager) {
         for (Task task : taskManager.getHistory()) {
             System.out.println(task);
         }
         System.out.println();
-
     }
 }

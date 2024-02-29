@@ -109,7 +109,6 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager.removeNode(id);
     }
 
-
     // Методы для Task.Subtask
 
     @Override

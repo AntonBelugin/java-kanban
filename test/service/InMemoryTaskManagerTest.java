@@ -21,9 +21,6 @@ class InMemoryTaskManagerTest {
         Assertions.assertEquals(task, taskManager.getTaskById(1));
         Assertions.assertEquals(epic, taskManager.getEpicById(2));
         Assertions.assertEquals(subtask, taskManager.getSubtaskById(3));
-
-        task.setId(2);
-        Assertions.assertEquals(2, task.getId());
     }
 
     @Test
@@ -35,4 +32,13 @@ class InMemoryTaskManagerTest {
         taskManager.deleteTask(1);
         Assertions.assertEquals(0, taskManager.getHistory().size());
     }
+
+    @Test
+    void canChangeIdByTask() {
+        Task task = taskManager.makeTask(new Task( "Помыть посуду",
+                "помыть посуду горячей водой"));
+        task.setId(2);
+        Assertions.assertEquals(2, task.getId());
+    }
+
     }
