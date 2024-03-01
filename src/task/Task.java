@@ -48,14 +48,11 @@ public class Task {
     }
 
     public void setId(int id) {
-        this.id = id;
-    }
-
-      /* Так можно защитить изменение id?
-       if (this.id == 0) {
+        if (this.id == 0) {
             this.id = id;
         } else {
             return;
-        }*/
+        }
+    }
 
 }

@@ -34,11 +34,21 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void canChangeIdByTask() {
+    void canNotChangeIdByTask() {
         Task task = taskManager.makeTask(new Task( "Помыть посуду",
                 "помыть посуду горячей водой"));
         task.setId(2);
-        Assertions.assertEquals(2, task.getId());
+        Assertions.assertEquals(1, task.getId());
+    }
+
+    @Test
+    void shouldDeleteSubtaskByEpic() {
+        Epic epic = taskManager.makeEpic(new Epic("Переезд",
+                "Переехать в другую квартиру"));
+        Subtask subtask = taskManager.makeSubtask(new Subtask(taskManager.getEpicById(1),
+                "Собрать коробки","собрать в коробки вещи"));
+        taskManager.deleteSubtask(2);
+        Assertions.assertFalse(taskManager.getEpicById(1).epicSubtasks.contains(subtask));
     }
 
     }
