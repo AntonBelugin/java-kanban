@@ -37,7 +37,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getTasks() { return new ArrayList<>(tasks.values());
+    public List<Task> getTasks() {
+        return new ArrayList<>(tasks.values());
     }
 
     @Override
@@ -63,6 +64,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTask(int id) {
         tasks.remove(id);
+        historyManager.removeNode(id);
     }
 
     // Методы для Epic
@@ -100,9 +102,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteEpic(int id) {
+        for (Subtask subtask : epics.get(id).epicSubtasks) {
+            historyManager.removeNode(subtask.getId());
+        }
         epics.remove(id);
+        historyManager.removeNode(id);
     }
-
 
     // Методы для Task.Subtask
 
@@ -156,6 +161,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.remove(id);
         epic.setTaskStatus(countStatus(epic));
         epics.put(epic.getId(), epic);
+        historyManager.removeNode(id);
     }
 
     @Override
@@ -163,7 +169,9 @@ public class InMemoryTaskManager implements TaskManager {
         return getEpicById(id).epicSubtasks;
     }
 
-    private int generateId() { return ++id; }
+    private int generateId() {
+        return ++id;
+    }
 
     //Метод для рассчета статуса Epic
     private TaskStatus countStatus(Epic epic) {
@@ -173,23 +181,23 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             int statusNew = 0;
             int statusDone = 0;
-            int statusIn_progress = 0;
+            int statusInProgress = 0;
             for (Subtask subtask: subtasksEpic) {
                 switch (subtask.getTaskStatus()) {
                     case NEW:
-                        statusNew +=1;
+                        statusNew += 1;
                         break;
                     case DONE:
-                        statusDone +=1;
+                        statusDone += 1;
                         break;
                     case IN_PROGRESS:
-                        statusIn_progress +=1;
+                        statusInProgress += 1;
                         break;
                 }
             }
-            if (statusDone < 1 && statusIn_progress < 1) {
+            if (statusDone < 1 && statusInProgress < 1) {
                 return TaskStatus.NEW;
-            } else if (statusNew < 1 && statusIn_progress < 1) {
+            } else if (statusNew < 1 && statusInProgress < 1) {
                 return TaskStatus.DONE;
             } else {
                 return TaskStatus.IN_PROGRESS;
