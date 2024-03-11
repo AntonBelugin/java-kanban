@@ -15,7 +15,7 @@ class InMemoryTaskManagerTest {
                 "помыть посуду горячей водой"));
         Epic epic = taskManager.makeEpic(new Epic("Переезд",
                 "Переехать в другую квартиру"));
-        Subtask subtask = taskManager.makeSubtask(new Subtask(taskManager.getEpicById(2),
+        Subtask subtask = taskManager.makeSubtask(new Subtask(2,
                 "Собрать коробки","собрать в коробки вещи"));
 
         Assertions.assertEquals(task, taskManager.getTaskById(1));
@@ -45,7 +45,7 @@ class InMemoryTaskManagerTest {
     void shouldDeleteSubtaskByEpic() {
         Epic epic = taskManager.makeEpic(new Epic("Переезд",
                 "Переехать в другую квартиру"));
-        Subtask subtask = taskManager.makeSubtask(new Subtask(taskManager.getEpicById(1),
+        Subtask subtask = taskManager.makeSubtask(new Subtask(1,
                 "Собрать коробки","собрать в коробки вещи"));
         taskManager.deleteSubtask(2);
         Assertions.assertFalse(taskManager.getEpicById(1).epicSubtasks.contains(subtask));
