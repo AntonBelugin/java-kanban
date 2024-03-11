@@ -11,7 +11,6 @@ public class Main {
         Managers managers = new Managers();
         TaskManager taskManager = managers.getDefault();
 
-
         System.out.println("Поехали!");
 
         taskManager.makeTask(new Task("Помыть посуду", "помыть посуду горячей водой"));
@@ -45,15 +44,8 @@ public class Main {
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);
         taskManager.getEpicById(3);
-        /*taskManager.deleteEpic(4);
-        taskManager.deleteSubtask(7);*/
 
         printHistory(taskManager);
-        /*taskManager.deleteEpic(3);
-        taskManager.deleteTask(1);*/
-
-        printHistory(taskManager);
-
     }
 
     private static void printHistory(TaskManager taskManager) {

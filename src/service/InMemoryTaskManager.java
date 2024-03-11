@@ -12,10 +12,10 @@ import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
     protected int id = 0;
-    protected Map<Integer, Task> tasks;
-    protected Map<Integer, Epic> epics;
-    protected Map<Integer, Subtask> subtasks;
-    protected HistoryManager historyManager;
+    protected static Map<Integer, Task> tasks;
+    protected static Map<Integer, Epic> epics;
+    protected static Map<Integer, Subtask> subtasks;
+    protected static HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.tasks = new HashMap<>();
@@ -220,15 +220,15 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    protected void putToTasks(Task task) {
+    protected static void putToTasks(Task task) {
         tasks.put(task.getId(), task);
     }
 
-    protected void putToEpics(Task epic) {
+    protected static void putToEpics(Task epic) {
         tasks.put(epic.getId(), epic);
     }
 
-    protected void putToSubtasks(Task subtask) {
+    protected static void putToSubtasks(Task subtask) {
         tasks.put(subtask.getId(), subtask);
     }
 }
