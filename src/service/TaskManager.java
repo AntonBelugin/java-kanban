@@ -3,6 +3,7 @@ package service;
 import task.Epic;
 import task.Subtask;
 import task.Task;
+
 import java.util.List;
 
 public interface TaskManager {
@@ -47,4 +48,5 @@ public interface TaskManager {
    List<Subtask> getSubtasksByEpic(int id);
 
     List<Task> getHistory();
+
 }

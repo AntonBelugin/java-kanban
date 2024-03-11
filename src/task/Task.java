@@ -4,6 +4,16 @@ import java.util.Objects;
 
 public class Task {
     protected int id;
+    protected int epicId;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     public String name;
     public String description;
     protected TaskStatus taskStatus;
@@ -52,6 +62,18 @@ public class Task {
             this.id = id;
         } else {
             return;
+        }
+    }
+
+    public TaskType getTaskType() {
+        return TaskType.TASK;
+    }
+
+    public Integer getEpicId() {
+        if (getTaskType() == TaskType.SUBTASK) {
+            return epicId;
+        } else {
+            return 0;
         }
     }
 

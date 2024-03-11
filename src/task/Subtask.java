@@ -2,17 +2,22 @@ package task;
 
 
 public class Subtask extends Task {
-    private final Epic epic;
 
-    public Subtask(Epic epic, String name, String description) {
+    public void setEpicId(Integer epicId) {
+        this.epicId = epicId;
+    }
+
+    private Integer epicId;
+
+    public Subtask(Integer epicId, String name, String description) {
         super(name, description);
-        this.epic = epic;
+        this.epicId = epicId;
     }
 
     @Override
     public String toString() {
         return "Субзадача №: " + id +
-                ", Эпик №: " + epic.id +
+                ", Эпик №: " + epicId +
                 ", Название: " + name +
                 ", Описание: " + description +
                 ", Статус: " + taskStatus +
@@ -27,7 +32,11 @@ public class Subtask extends Task {
         this.taskStatus = taskStatus;
     }
 
-    public Epic getEpic() {
-        return epic;
+    public Integer getEpicId() {
+        return epicId;
+    }
+
+    public TaskType getTaskType() {
+        return TaskType.SUBTASK;
     }
 }
