@@ -1,5 +1,8 @@
 package service;
 
+import convertors.EpicConvertor;
+import convertors.SubtaskConvertor;
+import convertors.TaskConvertor;
 import task.*;
 
 import java.io.*;
@@ -9,24 +12,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private static File file;
     private static Map<Integer, Task> allTasks = new HashMap<>();
 
-    public FileBackedTaskManager(HistoryManager historyManager, File file) {
+    /*public FileBackedTaskManager(HistoryManager historyManager, File file) {
         super(historyManager);
         this.file = file;
-    }
+    }*/
 
     public FileBackedTaskManager(File file) {
-        super(historyManager);
+        super(new InMemoryHistoryManager());
+        FileBackedTaskManager.file = file;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         File file = new File("resources/task.csv");
-        HistoryManager historyManager = new InMemoryHistoryManager();
-        TaskManager fileBackedTaskManager = new FileBackedTaskManager(historyManager, file);
+        TaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
 
         fileBackedTaskManager.makeTask(new Task("Помыть посуду", "помыть посуду горячей водой"));
         fileBackedTaskManager.makeEpic(new Epic("Переезд", "Переехать в другую квартиру"));
@@ -41,6 +44,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         TaskManager taskManager2 = loadFromFile(file);
         taskManager2.getTaskById(1);
         printHistory(taskManager2);
+
+        System.out.println(fileBackedTaskManager.getEpics());
+        System.out.println(taskManager2.getEpics());
     }
 
     @Override
@@ -165,39 +171,30 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     private void save() {
-        try (BufferedWriter writFile = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
-            writFile.write("id,type,name,status,description,epic\n");
+        try (BufferedWriter writeFile = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
+            writeFile.write("id,type,name,status,description,epic\n");
+            TaskConvertor taskConvertor = new TaskConvertor();
+            EpicConvertor epicConvertor = new EpicConvertor();
+            SubtaskConvertor subtaskConvertor = new SubtaskConvertor();
             for (Task task : tasks.values()) {
-                writFile.write(taskToString(task) + "\n");
+                writeFile.write(taskConvertor.toString(task) + "\n");
             }
             for (Task epic : epics.values()) {
-                writFile.write(epicToString(epic) + "\n");
+                writeFile.write(epicConvertor.toString(epic) + "\n");
             }
             for (Task subtask : subtasks.values()) {
-                writFile.write(subtaskToString(subtask) + "\n");
+                writeFile.write(subtaskConvertor.toString(subtask) + "\n");
             }
-            writFile.write(historyToString(historyManager));
+            writeFile.write(historyToString(historyManager));
+        } catch (ManagerSaveException exception) {
+            exception.getDetailMessage();
         } catch (FileNotFoundException e) {
+           // throw new ManagerSaveException();
             System.out.println("Произошла ошибка во время записи файла.");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+          //  throw new RuntimeException(e);
+           // throw new ManagerSaveException();
         }
-    }
-
-    private String taskToString(Task task) {
-        return task.getId() + "," + task.getTaskType() + "," + task.getName() +
-                "," + task.getTaskStatus() + "," + task.getDescription();
-    }
-
-    private String epicToString(Task epic) {
-        return epic.getId() + "," + epic.getTaskType() + "," + epic.getName() +
-                "," + epic.getTaskStatus() + "," + epic.getDescription();
-    }
-
-    private String subtaskToString(Task subtask) {
-        return subtask.getId() + "," + subtask.getTaskType() + "," + subtask.getName() +
-                "," + subtask.getTaskStatus() + "," + subtask.getDescription() + "," +
-                subtask.getEpicId();
     }
 
     static String historyToString(HistoryManager manager) {
@@ -221,48 +218,53 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         return historyId;
     }
 
-    static FileBackedTaskManager loadFromFile(File file) throws IOException {
-        FileBackedTaskManager fileBackedTaskManager2 = new FileBackedTaskManager(file);
-        recovery(readFromFile(file));
-        return fileBackedTaskManager2;
+    static FileBackedTaskManager loadFromFile(File file) {
+        try {
+            FileBackedTaskManager fileBackedTaskManager2 = new FileBackedTaskManager(file);
+            recovery(readFromFile(file));
+            return fileBackedTaskManager2;
+        } catch (IOException e) {
+            System.out.println("Произошла ошибка во время чтения файла.");
+            return null;
+        }
     }
 
     private static List<String> readFromFile(File file) throws IOException {
         List<String> dataFromFile = new ArrayList<>();
-        try (BufferedReader readFile = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            int i = 0;
+       BufferedReader readFile = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8));
             while (readFile.ready()) {
                 dataFromFile.add(readFile.readLine());
             }
             return dataFromFile;
-        } catch (FileNotFoundException e) {
-            System.out.println("Произошла ошибка во время чтения файла.");
-            return dataFromFile;
-        }
     }
 
     static void recovery(List<String> dataFromFile) {
         for (int i = 1; i < (dataFromFile.size() - 2); i++) {
             String[] taskData = dataFromFile.get(i).split(",");
-            switch (TaskType.valueOf(taskData[1])) {
+            int id = Integer.parseInt(taskData[0]);
+            TaskType taskType = TaskType.valueOf(taskData[1]);
+            String name = taskData[2];
+            TaskStatus status = TaskStatus.valueOf(taskData[3]);
+            String description = taskData[4];
+            switch (taskType) {
                 case TASK:
-                    Task task = new Task(taskData[2], taskData[4]);
-                    task.setId(Integer.parseInt(taskData[0]));
-                    task.setTaskStatus(TaskStatus.valueOf(taskData[3]));
+                    Task task = new Task(name, description);
+                    task.setId(id);
+                    task.setTaskStatus(status);
                     putToTasks(task);
                     allTasks.put(task.getId(), task);
                     break;
                 case EPIC:
-                    Epic epic = new Epic(taskData[2], taskData[4]);
-                    epic.setId(Integer.parseInt(taskData[0]));
-                    epic.setTaskStatus(TaskStatus.valueOf(taskData[3]));
+                    Epic epic = new Epic(name, description);
+                    epic.setId(id);
+                    epic.setTaskStatus(status);
                     putToEpics(epic);
                     allTasks.put(epic.getId(), epic);
                     break;
                 case SUBTASK:
-                    Subtask subtask = new Subtask(Integer.parseInt(taskData[5]), taskData[2], taskData[4]);
-                    subtask.setId(Integer.parseInt(taskData[0]));
-                    subtask.setTaskStatus(TaskStatus.valueOf(taskData[3]));
+                    Subtask subtask = new Subtask(Integer.parseInt(taskData[5]), name, description);
+                    subtask.setId(id);
+                    subtask.setTaskStatus(status);
                     putToSubtasks(subtask);
                     allTasks.put(subtask.getId(), subtask);
                     break;

@@ -224,11 +224,11 @@ public class InMemoryTaskManager implements TaskManager {
         tasks.put(task.getId(), task);
     }
 
-    protected static void putToEpics(Task epic) {
-        tasks.put(epic.getId(), epic);
+    protected static void putToEpics(Epic epic) {
+        epics.put(epic.getId(), epic);
     }
 
-    protected static void putToSubtasks(Task subtask) {
-        tasks.put(subtask.getId(), subtask);
+    protected static void putToSubtasks(Subtask subtask) {
+        subtasks.put(subtask.getId(), subtask);
     }
 }
