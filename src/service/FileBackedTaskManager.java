@@ -17,11 +17,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private static File file;
     private static Map<Integer, Task> allTasks = new HashMap<>();
 
-    /*public FileBackedTaskManager(HistoryManager historyManager, File file) {
-        super(historyManager);
-        this.file = file;
-    }*/
-
     public FileBackedTaskManager(File file) {
         super(new InMemoryHistoryManager());
         FileBackedTaskManager.file = file;
@@ -177,8 +172,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             EpicConvertor epicConvertor = new EpicConvertor();
             SubtaskConvertor subtaskConvertor = new SubtaskConvertor();
             for (Task task : tasks.values()) {
-                writeFile.write(taskConvertor.toString(task) + "\n");
-            }
+                    writeFile.write(taskConvertor.toString(task) + "\n");
+                }
             for (Task epic : epics.values()) {
                 writeFile.write(epicConvertor.toString(epic) + "\n");
             }
@@ -186,14 +181,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 writeFile.write(subtaskConvertor.toString(subtask) + "\n");
             }
             writeFile.write(historyToString(historyManager));
-        } catch (ManagerSaveException exception) {
-            exception.getDetailMessage();
-        } catch (FileNotFoundException e) {
-           // throw new ManagerSaveException();
-            System.out.println("Произошла ошибка во время записи файла.");
         } catch (IOException e) {
-          //  throw new RuntimeException(e);
-           // throw new ManagerSaveException();
+          throw new ManagerSaveException("Произошла ошибка во время записи файла: " + file.getName(), e);
         }
     }
 

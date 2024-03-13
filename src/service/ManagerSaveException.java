@@ -3,12 +3,9 @@ package service;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class ManagerSaveException extends IOException {
+public class ManagerSaveException extends RuntimeException {
 
-    public ManagerSaveException() {
-
+    public ManagerSaveException(String s, IOException e) {
     }
-    public void getDetailMessage() {
 
-    }
 }
