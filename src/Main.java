@@ -1,8 +1,8 @@
 import service.Managers;
 import service.TaskManager;
 import task.Epic;
-import task.Task;
 import task.Subtask;
+import task.Task;
 
 public class Main {
 
@@ -19,17 +19,17 @@ public class Main {
         taskManager.makeEpic(new Epic("Переезд", "Переехать в другую квартиру"));
         taskManager.makeEpic(new Epic("Уборка", "Убраться в новой квартире"));
 
-        taskManager.makeSubtask(new Subtask(taskManager.getEpicById(3), "Собрать коробки",
+        taskManager.makeSubtask(new Subtask(3, "Собрать коробки",
                 "собрать в коробки вещи"));
         taskManager.getEpicById(3);
-        taskManager.makeSubtask(new Subtask(taskManager.getEpicById(4), "Упаковать кошку",
+        taskManager.makeSubtask(new Subtask(4, "Упаковать кошку",
                 "не забыть лоток"));
         taskManager.getEpicById(3);
-        taskManager.makeSubtask(new Subtask(taskManager.getEpicById(3),"Пропылесосить коридор",
+        taskManager.makeSubtask(new Subtask(3, "Пропылесосить коридор",
                 "2 раза"));
 
         taskManager.getTaskById(2);
-        taskManager.makeSubtask(new Subtask(taskManager.getEpicById(3), "Собрать коробки",
+        taskManager.makeSubtask(new Subtask(3, "Собрать коробки",
               "собрать в коробки вещи"));
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);
@@ -44,16 +44,8 @@ public class Main {
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);
         taskManager.getEpicById(3);
-        taskManager.deleteEpic(4);
-        taskManager.deleteSubtask(7);
 
         printHistory(taskManager);
-
-        taskManager.deleteEpic(3);
-        taskManager.deleteTask(1);
-
-        printHistory(taskManager);
-
     }
 
     private static void printHistory(TaskManager taskManager) {

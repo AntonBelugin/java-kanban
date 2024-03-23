@@ -27,4 +27,8 @@ public class Epic extends Task {
     public void setTaskStatus(TaskStatus taskStatus) {
         this.taskStatus = taskStatus;
     }
+
+    public TaskType getTaskType() {
+        return TaskType.EPIC;
+    }
 }
