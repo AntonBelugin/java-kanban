@@ -1,13 +1,17 @@
 package task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Subtask extends Task {
-
-    public void setEpicId(Integer epicId) {
-        this.epicId = epicId;
-    }
-
     private Integer epicId;
+
+    public Subtask(Integer epicId, String name, String description, String startTime, int duration) {
+        super(name, description);
+        this.epicId = epicId;
+        this.startTime = LocalDateTime.parse(startTime, inputFormatter);
+        this.duration = Duration.ofMinutes(duration);
+    }
 
     public Subtask(Integer epicId, String name, String description) {
         super(name, description);
@@ -20,8 +24,11 @@ public class Subtask extends Task {
                 ", Эпик №: " + epicId +
                 ", Название: " + name +
                 ", Описание: " + description +
-                ", Статус: " + taskStatus +
-                '.';
+                ", Статус: " + taskStatus + ",\n" +
+                "Начало: " + startTime +
+                ", Длительность: " + duration +
+                ", Окончание: " + getEndTime() +
+                ".\n";
     }
 
     public TaskStatus getTaskStatus() {
@@ -40,3 +47,5 @@ public class Subtask extends Task {
         return TaskType.SUBTASK;
     }
 }
+
+
