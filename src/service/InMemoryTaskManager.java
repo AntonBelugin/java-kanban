@@ -239,6 +239,7 @@ public class InMemoryTaskManager implements TaskManager {
     public TreeSet<Task> getPrioritizedTasks() {
         return priorityTask;
     }
+
     public boolean testTime(Task newTask) {
         return priorityTask.stream()
                 .filter(Task -> !Task.getEndTime().isBefore(newTask.getStartTime()))
