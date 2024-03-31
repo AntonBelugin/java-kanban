@@ -35,11 +35,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
        fileBackedTaskManager.makeSubtask(new Subtask(2, "Собрать коробки",
                 "собрать в коробки вещи", "12.12.2023 16:00", 30));
 
-        fileBackedTaskManager.makeSubtask(new Subtask(2, "Собрать коробки2",
+       /* fileBackedTaskManager.makeSubtask(new Subtask(2, "Собрать коробки2",
                 "собрать в коробки вещи2", "12.12.2023 15:00", 25));
 
         fileBackedTaskManager.makeSubtask(new Subtask(2, "Собрать коробки2",
-                "собрать в коробки вещи2", "12.12.2023 14:00", 25));
+                "собрать в коробки вещи2", "12.12.2023 14:00", 25));*/
+
+        fileBackedTaskManager.getSubtaskById(3).setTaskStatus(TaskStatus.DONE);
+        fileBackedTaskManager.updateSubtask(fileBackedTaskManager.getSubtaskById(3));
+
+        System.out.println(fileBackedTaskManager.getEpicById(2));
 
 
         System.out.println(fileBackedTaskManager.getPrioritizedTasks() + "\n");

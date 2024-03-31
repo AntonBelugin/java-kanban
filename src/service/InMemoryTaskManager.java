@@ -31,7 +31,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task makeTask(Task task) {
-        if (testTime(task)) {
+        if (isTimeTaskFree(task)) {
             task.setId(generateId());
             task.setTaskStatus(TaskStatus.NEW);
             tasks.put(task.getId(), task);
@@ -67,7 +67,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
-        if (testTime(task)) {
+        if (isTimeTaskFree(task)) {
             Task saved = tasks.get(task.getId());
             saved.name = task.name;
             saved.description = task.description;
@@ -141,7 +141,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask makeSubtask(Subtask subtask) {
-        if (testTime(subtask)) {
+        if (isTimeTaskFree(subtask)) {
             subtask.setId(generateId());
             subtask.setTaskStatus(TaskStatus.NEW);
             Epic epic = epics.get(subtask.getEpicId());
@@ -185,10 +185,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        if (testTime(subtask)) {
+        priorityTask.remove(getSubtaskById(subtask.getId()));
+        if (isTimeTaskFree(subtask)) {
             Epic epic = epics.get(subtask.getEpicId());
             epic.epicSubtasks.remove(getSubtaskById(subtask.getId()));
-            priorityTask.remove(getSubtaskById(subtask.getId()));
             epic.epicSubtasks.add(subtask);
             epic.setParameters(epic);
             priorityTask.add(subtask);
@@ -240,10 +240,10 @@ public class InMemoryTaskManager implements TaskManager {
         return priorityTask;
     }
 
-    public boolean testTime(Task newTask) {
+    public boolean isTimeTaskFree(Task newTask) {
         return priorityTask.stream()
-                .filter(Task -> !Task.getEndTime().isBefore(newTask.getStartTime()))
-                .noneMatch(Task -> Task.getStartTime().isBefore(newTask.getEndTime()));
+                .filter(task -> !task.getEndTime().isBefore(newTask.getStartTime()))
+                .noneMatch(task -> task.getStartTime().isBefore(newTask.getEndTime()));
     }
 
 }
