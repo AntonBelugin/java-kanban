@@ -47,7 +47,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         fileBackedTaskManager.getSubtaskById(2);
         fileBackedTaskManager.getSubtaskById(3);
 
-        System.out.println(fileBackedTaskManager.getHistory()+ "\n");
+        System.out.println(fileBackedTaskManager.getHistory() + "\n");
 
         System.out.println(fileBackedTaskManager.getPrioritizedTasks() + "\n");
 
