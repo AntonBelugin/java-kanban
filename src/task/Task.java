@@ -114,4 +114,12 @@ public class Task implements Comparable<Task> {
     public int compareTo(Task o) {
         return startTime.compareTo(o.startTime);
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

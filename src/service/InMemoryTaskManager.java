@@ -61,12 +61,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        historyManager.addHistoryView(tasks.get(id));
+        if (tasks.containsKey(id)) {
+            historyManager.addHistoryView(tasks.get(id));
+        }
         return tasks.get(id);
     }
 
     @Override
     public void updateTask(Task task) {
+        priorityTask.remove(getTaskById(task.getId()));
         if (isTimeTaskFree(task)) {
             Task saved = tasks.get(task.getId());
             saved.name = task.name;
@@ -115,7 +118,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(int id) {
-        historyManager.addHistoryView(epics.get(id));
+        if (epics.containsKey(id)) {
+            historyManager.addHistoryView(epics.get(id));
+        }
         return epics.get(id);
     }
 
@@ -179,7 +184,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtaskById(int id) {
-        historyManager.addHistoryView(subtasks.get(id));
+        if (subtasks.containsKey(id)) {
+            historyManager.addHistoryView(subtasks.get(id));
+        }
         return subtasks.get(id);
     }
 

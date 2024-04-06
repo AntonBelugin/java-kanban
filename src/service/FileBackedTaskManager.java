@@ -26,26 +26,28 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         File file = new File("resources/task.csv");
         TaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
 
-        fileBackedTaskManager.makeTask(new Task("Помыть посуду",
-                "помыть посуду горячей водой", "12.12.2023 15:00", 40));
-
         fileBackedTaskManager.makeEpic(new Epic("Переезд",
                 "Переехать в другую квартиру"));
 
-       fileBackedTaskManager.makeSubtask(new Subtask(2, "Собрать коробки",
+       fileBackedTaskManager.makeSubtask(new Subtask(1, "Собрать коробки",
                 "собрать в коробки вещи", "12.12.2023 16:00", 30));
 
-       /* fileBackedTaskManager.makeSubtask(new Subtask(2, "Собрать коробки2",
-                "собрать в коробки вещи2", "12.12.2023 15:00", 25));
+       fileBackedTaskManager.makeSubtask(new Subtask(1, "Собрать коробки2",
+                "собрать в коробки вещи2", "13.12.2023 15:00", 25));
 
-        fileBackedTaskManager.makeSubtask(new Subtask(2, "Собрать коробки2",
-                "собрать в коробки вещи2", "12.12.2023 14:00", 25));*/
+        fileBackedTaskManager.makeTask(new Task("Помыть посуду",
+                "помыть посуду горячей водой", "12.12.2023 15:00", 40));
 
-        fileBackedTaskManager.getSubtaskById(3).setTaskStatus(TaskStatus.DONE);
-        fileBackedTaskManager.updateSubtask(fileBackedTaskManager.getSubtaskById(3));
+        fileBackedTaskManager.makeEpic(new Epic("Переезд2",
+                "Переехать в другую квартиру2"));
 
-        System.out.println(fileBackedTaskManager.getEpicById(2));
+        fileBackedTaskManager.getTaskById(4);
+        fileBackedTaskManager.getEpicById(1);
+        fileBackedTaskManager.getEpicById(5);
+        fileBackedTaskManager.getSubtaskById(2);
+        fileBackedTaskManager.getSubtaskById(3);
 
+        System.out.println(fileBackedTaskManager.getHistory()+ "\n");
 
         System.out.println(fileBackedTaskManager.getPrioritizedTasks() + "\n");
 
