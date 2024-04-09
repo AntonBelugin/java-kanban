@@ -1,26 +1,30 @@
 package task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class Task {
+public class Task implements Comparable<Task> {
+    protected Duration duration;
+    protected LocalDateTime startTime;
     protected int id;
     protected int epicId;
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public String name;
     public String description;
     protected TaskStatus taskStatus;
+    protected DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    public Task(String name, String description, String startTime, int duration) {
+        this.name = name;
+        this.description = description;
+        this.startTime = LocalDateTime.parse(startTime, inputFormatter);
+        this.duration = Duration.ofMinutes(duration);
     }
 
     @Override
@@ -28,8 +32,11 @@ public class Task {
         return "Задача №: " + id +
                 " Наименование: " + name +
                 ", Описание: " + description +
-                ", Статус: " + taskStatus +
-                ".";
+                ", Статус: " + taskStatus + ",\n" +
+                "Начало: " + startTime +
+                ", Длительность: " + duration +
+                ", Окончание: " + getEndTime() +
+                ".\n";
     }
 
     public Integer getId() {
@@ -60,8 +67,6 @@ public class Task {
     public void setId(int id) {
         if (this.id == 0) {
             this.id = id;
-        } else {
-            return;
         }
     }
 
@@ -77,4 +82,44 @@ public class Task {
         }
     }
 
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public int compareTo(Task o) {
+        return startTime.compareTo(o.startTime);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

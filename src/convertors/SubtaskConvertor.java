@@ -5,8 +5,9 @@ import task.Task;
 public class SubtaskConvertor {
 
     public String toString(Task subtask) {
-        return subtask.getId() + "," + subtask.getTaskType() + "," + subtask.getName() +
-                "," + subtask.getTaskStatus() + "," + subtask.getDescription() + "," +
-                subtask.getEpicId();
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,", subtask.getId(),subtask.getTaskType(),
+                subtask.getName(), subtask.getTaskStatus(), subtask.getDescription(),
+                subtask.getEpicId(), subtask.getStartTime(), subtask.getDuration().toMinutes());
+
     }
 }

@@ -7,15 +7,15 @@ import task.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private static File file;
     private static Map<Integer, Task> allTasks = new HashMap<>();
+
 
     public FileBackedTaskManager(File file) {
         super(new InMemoryHistoryManager());
@@ -26,22 +26,35 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         File file = new File("resources/task.csv");
         TaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
 
-        fileBackedTaskManager.makeTask(new Task("Помыть посуду", "помыть посуду горячей водой"));
-        fileBackedTaskManager.makeEpic(new Epic("Переезд", "Переехать в другую квартиру"));
-        fileBackedTaskManager.makeSubtask(new Subtask(2, "Собрать коробки",
-                "собрать в коробки вещи"));
-        fileBackedTaskManager.getTaskById(1);
-        fileBackedTaskManager.getEpicById(2);
+        fileBackedTaskManager.makeEpic(new Epic("Переезд",
+                "Переехать в другую квартиру"));
+
+       fileBackedTaskManager.makeSubtask(new Subtask(1, "Собрать коробки",
+                "собрать в коробки вещи", "12.12.2023 16:00", 30));
+
+       fileBackedTaskManager.makeSubtask(new Subtask(1, "Собрать коробки2",
+                "собрать в коробки вещи2", "13.12.2023 15:00", 25));
+
+        fileBackedTaskManager.makeTask(new Task("Помыть посуду",
+                "помыть посуду горячей водой", "12.12.2023 15:00", 40));
+
+        fileBackedTaskManager.makeEpic(new Epic("Переезд2",
+                "Переехать в другую квартиру2"));
+
+        fileBackedTaskManager.getTaskById(4);
+        fileBackedTaskManager.getEpicById(1);
+        fileBackedTaskManager.getEpicById(5);
+        fileBackedTaskManager.getSubtaskById(2);
         fileBackedTaskManager.getSubtaskById(3);
 
-        printHistory(fileBackedTaskManager);
+        System.out.println(fileBackedTaskManager.getHistory() + "\n");
+
+        System.out.println(fileBackedTaskManager.getPrioritizedTasks() + "\n");
 
         TaskManager taskManager2 = loadFromFile(file);
-        taskManager2.getTaskById(1);
-        printHistory(taskManager2);
 
-        System.out.println(fileBackedTaskManager.getEpics());
-        System.out.println(taskManager2.getEpics());
+        System.out.println(taskManager2.getPrioritizedTasks() + "\n");
+
     }
 
     @Override
@@ -167,7 +180,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter writeFile = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
-            writeFile.write("id,type,name,status,description,epic\n");
+            writeFile.write("id,type,name,status,description,epic, startTime, duration\n");
             TaskConvertor taskConvertor = new TaskConvertor();
             EpicConvertor epicConvertor = new EpicConvertor();
             SubtaskConvertor subtaskConvertor = new SubtaskConvertor();
@@ -201,10 +214,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     static List<Integer> historyFromString(List<String> dataFromFile) {
         List<Integer> historyId = new ArrayList<>();
         String[] split = dataFromFile.get((dataFromFile.size() - 1)).split(",");
-        for (String id : split) {
-            historyId.add(Integer.parseInt(id));
+        if (!split[0].isEmpty()) {
+            for (String id : split) {
+                historyId.add(Integer.parseInt(id));
+            }
+            return historyId;
+        } else {
+            return historyId;
         }
-        return historyId;
     }
 
     static FileBackedTaskManager loadFromFile(File file) {
@@ -235,11 +252,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             String name = taskData[2];
             TaskStatus status = TaskStatus.valueOf(taskData[3]);
             String description = taskData[4];
+            LocalDateTime startTime = LocalDateTime.parse(taskData[6]);
+            Duration duration = Duration.ofMinutes(Integer.parseInt(taskData[7]));
             switch (taskType) {
                 case TASK:
                     Task task = new Task(name, description);
                     task.setId(id);
                     task.setTaskStatus(status);
+                    task.setStartTime(startTime);
+                    task.setDuration(duration);
+                    putToPriority(task);
                     putToTasks(task);
                     allTasks.put(task.getId(), task);
                     break;
@@ -247,6 +269,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     Epic epic = new Epic(name, description);
                     epic.setId(id);
                     epic.setTaskStatus(status);
+                    epic.setStartTime(startTime);
+                    epic.setDuration(duration);
                     putToEpics(epic);
                     allTasks.put(epic.getId(), epic);
                     break;
@@ -254,6 +278,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     Subtask subtask = new Subtask(Integer.parseInt(taskData[5]), name, description);
                     subtask.setId(id);
                     subtask.setTaskStatus(status);
+                    subtask.setStartTime(startTime);
+                    subtask.setDuration(duration);
+                    putToPriority(subtask);
                     putToSubtasks(subtask);
                     allTasks.put(subtask.getId(), subtask);
                     break;
@@ -261,6 +288,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
         for (Subtask subtask : subtasks.values()) {
             epics.get(subtask.getEpicId()).epicSubtasks.add(subtask);
+            epics.get(subtask.getEpicId()).setParameters(epics.get(subtask.getEpicId()));
         }
         List<Integer> historyId = historyFromString(dataFromFile);
         for (Integer id : historyId) {
