@@ -42,6 +42,7 @@ public class HttpTaskServer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         server.createContext("/tasks", new TasksHandler(taskManager));
         server.createContext("/epics", new EpicsHandler(taskManager));
         server.createContext("/subtasks", new SubtasksHandler(taskManager));
