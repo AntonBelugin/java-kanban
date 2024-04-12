@@ -1,6 +1,5 @@
 package convertors;
 
-import task.Subtask;
 import task.Task;
 
 public class SubtaskConvertor {
