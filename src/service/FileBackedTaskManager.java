@@ -70,7 +70,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public List<Task> getTasks() {
+    public Map<Integer, Task> getTasks() {
         return super.getTasks();
     }
 
@@ -88,9 +88,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateTask(Task task) {
-        super.updateTask(task);
+    public Task updateTask(Task task) {
+        Task taskUpdate = super.updateTask(task);
         save();
+        return taskUpdate;
     }
 
     @Override
@@ -107,7 +108,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public List<Epic> getEpics() {
+    public Map<Integer, Epic> getEpics() {
         return super.getEpics();
     }
 
@@ -125,9 +126,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateEpic(Epic epic) {
-        super.updateEpic(epic);
+    public Epic updateEpic(Epic epic) {
+        Epic updateEpic = super.updateEpic(epic);
         save();
+        return updateEpic;
     }
 
     @Override
@@ -144,7 +146,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public List<Subtask> getSubtasks() {
+    public Map<Integer, Subtask> getSubtasks() {
         return super.getSubtasks();
     }
 
@@ -162,9 +164,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
-        super.updateSubtask(subtask);
+    public Subtask updateSubtask(Subtask subtask) {
+        Subtask updateSubtask = super.updateSubtask(subtask);
         save();
+        return updateSubtask;
     }
 
     @Override

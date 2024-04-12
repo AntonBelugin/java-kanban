@@ -44,8 +44,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getTasks() {
-        return new ArrayList<>(tasks.values());
+    public Map<Integer, Task> getTasks() {
+        return tasks;
     }
 
     @Override
@@ -68,18 +68,17 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(Task task) {
-        priorityTask.remove(getTaskById(task.getId()));
+    public Task updateTask(Task task) {
+        Task oldTask = tasks.get(task.getId());
+        priorityTask.remove(oldTask);
         if (isTimeTaskFree(task)) {
-            Task saved = tasks.get(task.getId());
-            saved.name = task.name;
-            saved.description = task.description;
-            saved.setTaskStatus(task.getTaskStatus());
-            priorityTask.remove(task);
             priorityTask.add(task);
-            tasks.put(task.getId(), saved);
+            tasks.remove(oldTask.getId());
+            tasks.put(task.getId(), task);
+            return task;
         } else {
-            System.out.println("Время начала задачи не удовлетворяет условиям");
+            priorityTask.add(oldTask);
+            return null;
         }
     }
 
@@ -100,8 +99,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Epic> getEpics() {
-        return new ArrayList<>(epics.values());
+    public Map<Integer, Epic> getEpics() {
+        return epics;
     }
 
     @Override
@@ -125,11 +124,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public Epic updateEpic(Epic epic) {
         Epic saved = epics.get(epic.getId());
         saved.name = epic.name;
         saved.description = epic.description;
         epics.put(epic.getId(), saved);
+        return saved;
     }
 
     @Override
@@ -163,8 +163,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Subtask> getSubtasks() {
-        return new ArrayList<>(subtasks.values());
+    public Map<Integer, Subtask> getSubtasks() {
+        return subtasks;
     }
 
     @Override
@@ -191,18 +191,22 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
-        priorityTask.remove(getSubtaskById(subtask.getId()));
+    public Subtask updateSubtask(Subtask subtask) {
+        Subtask oldSubtask = subtasks.get(subtask.getId());
+        priorityTask.remove(oldSubtask);
         if (isTimeTaskFree(subtask)) {
             Epic epic = epics.get(subtask.getEpicId());
-            epic.epicSubtasks.remove(getSubtaskById(subtask.getId()));
+            epic.epicSubtasks.remove(oldSubtask);
             epic.epicSubtasks.add(subtask);
             epic.setParameters(epic);
             priorityTask.add(subtask);
             epics.put(epic.getId(), epic);
             subtasks.put(subtask.getId(), subtask);
+            return subtask;
         } else {
+            priorityTask.add(oldSubtask);
             System.out.println("Время начала задачи не удовлетворяет условиям");
+            return null;
         }
     }
 
@@ -252,5 +256,4 @@ public class InMemoryTaskManager implements TaskManager {
                 .filter(task -> !task.getEndTime().isBefore(newTask.getStartTime()))
                 .noneMatch(task -> task.getStartTime().isBefore(newTask.getEndTime()));
     }
-
 }

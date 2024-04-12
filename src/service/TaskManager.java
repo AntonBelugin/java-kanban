@@ -5,44 +5,45 @@ import task.Subtask;
 import task.Task;
 
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 public interface TaskManager {
     Task makeTask(Task task);
 
-    List<Task> getTasks();
+    Map<Integer, Task> getTasks();
 
     void clearTasks();
 
     Task getTaskById(int id);
 
-    void updateTask(Task task);
+    Task updateTask(Task task);
 
     void deleteTask(int id);
 
     // Методы для Epic
     Epic makeEpic(Epic epic);
 
-    List<Epic> getEpics();
+    Map<Integer, Epic> getEpics();
 
     void clearEpics();
 
     Epic getEpicById(int id);
 
-    void updateEpic(Epic epic);
+    Epic updateEpic(Epic epic);
 
     void deleteEpic(int id);
 
     // Методы для Task.Subtask
     Subtask makeSubtask(Subtask subtask);
 
-    List<Subtask> getSubtasks();
+    Map<Integer, Subtask> getSubtasks();
 
     void clearSubtasks();
 
     Subtask getSubtaskById(int id);
 
-    void updateSubtask(Subtask subtask);
+    Subtask updateSubtask(Subtask subtask);
 
     void deleteSubtask(int id);
 
