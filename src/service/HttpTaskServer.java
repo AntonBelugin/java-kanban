@@ -2,11 +2,12 @@ package service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import convertors.DurationAdapter;
-import convertors.LocalDateTimeAdapter;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -19,6 +20,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class HttpTaskServer {
@@ -455,5 +457,33 @@ public class HttpTaskServer {
             os.write(responseString.getBytes(DEFAULT_CHARSET));
         }
         exchange.close();
+    }
+
+    public static class DurationAdapter extends TypeAdapter<Duration> {
+
+        @Override
+        public void write(final JsonWriter jsonWriter, final Duration duration) throws IOException {
+            jsonWriter.value(duration.toMinutes());
+        }
+
+        @Override
+        public Duration read(final JsonReader jsonReader) throws IOException {
+            return Duration.ofMinutes(Integer.parseInt(jsonReader.nextString()));
+        }
+    }
+
+    public static class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
+
+        private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
+        @Override
+        public void write(JsonWriter jsonWriter, LocalDateTime localDateTime) throws IOException {
+            jsonWriter.value(localDateTime.format(dtf));
+        }
+
+        @Override
+        public LocalDateTime read(final JsonReader jsonReader) throws IOException {
+            return LocalDateTime.parse(jsonReader.nextString(), dtf);
+        }
     }
 }
