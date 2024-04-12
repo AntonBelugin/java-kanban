@@ -81,7 +81,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getEpics() {
-        Assertions.assertEquals(epic, taskManager.getEpics().get(0));
+        Assertions.assertEquals(epic, taskManager.getEpics().get(1));
     }
 
     @Test
@@ -115,7 +115,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getSubtasks() {
-        Assertions.assertEquals(subtask2, taskManager.getSubtasks().get(1));
+        Assertions.assertEquals(subtask2, taskManager.getSubtasks().get(3));
     }
 
     @Test
