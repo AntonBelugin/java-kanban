@@ -80,14 +80,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getEpics() {
-        Assertions.assertEquals(epic, taskManager.getEpics().get(1));
-    }
-
-    @Test
     void clearEpics() {
         taskManager.clearEpics();
         Assertions.assertTrue(taskManager.getEpics().isEmpty());
+    }
+
+    @Test
+    void getEpics() {
+        Assertions.assertEquals(epic, taskManager.getEpics().get(1));
     }
 
     @Test
