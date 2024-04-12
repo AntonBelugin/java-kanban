@@ -47,6 +47,7 @@ public class HttpTaskServer {
         server.createContext("/prioritized", new PrioritizedHandler(taskManager));
 
     }
+
     public void start() {
         server.start();
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
