@@ -49,6 +49,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public Map<Integer, Task> getMapTasks() {
+        return tasks;
+    }
+
+    @Override
     public void clearTasks() {
         for (Integer id : tasks.keySet()) {
             historyManager.removeNode(id);
@@ -68,18 +73,17 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(Task task) {
-        priorityTask.remove(getTaskById(task.getId()));
+    public Task updateTask(Task task) {
+        Task oldTask = tasks.get(task.getId());
+        priorityTask.remove(oldTask);
         if (isTimeTaskFree(task)) {
-            Task saved = tasks.get(task.getId());
-            saved.name = task.name;
-            saved.description = task.description;
-            saved.setTaskStatus(task.getTaskStatus());
-            priorityTask.remove(task);
             priorityTask.add(task);
-            tasks.put(task.getId(), saved);
+            tasks.remove(oldTask.getId());
+            tasks.put(task.getId(), task);
+            return task;
         } else {
-            System.out.println("Время начала задачи не удовлетворяет условиям");
+            priorityTask.add(oldTask);
+            return null;
         }
     }
 
@@ -105,6 +109,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public Map<Integer, Epic> getMapEpics() {
+        return epics;
+    }
+
+    @Override
     public void clearEpics() {
         for (Integer id : epics.keySet()) {
             for (Subtask subtask : epics.get(id).epicSubtasks) {
@@ -125,11 +134,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public Epic updateEpic(Epic epic) {
         Epic saved = epics.get(epic.getId());
         saved.name = epic.name;
         saved.description = epic.description;
         epics.put(epic.getId(), saved);
+        return saved;
     }
 
     @Override
@@ -151,7 +161,7 @@ public class InMemoryTaskManager implements TaskManager {
             subtask.setTaskStatus(TaskStatus.NEW);
             Epic epic = epics.get(subtask.getEpicId());
             epic.epicSubtasks.add(subtask);
-            epic.setParameters(epic);
+            epic.updateDataEpic(epic);
             epics.put(epic.getId(), epic);
             priorityTask.add(subtask);
             subtasks.put(subtask.getId(), subtask);
@@ -168,6 +178,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public Map<Integer, Subtask> getMapSubtasks() {
+        return subtasks;
+    }
+
+    @Override
     public void clearSubtasks() {
         for (Integer id : subtasks.keySet()) {
             for (Subtask subtask: subtasks.values()) {
@@ -177,7 +192,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         subtasks.clear();
         for (Epic epic: epics.values()) {
-            epic.setParameters(epic);
+            epic.updateDataEpic(epic);
             epic.epicSubtasks.clear();
         }
     }
@@ -191,18 +206,22 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
-        priorityTask.remove(getSubtaskById(subtask.getId()));
+    public Subtask updateSubtask(Subtask subtask) {
+        Subtask oldSubtask = subtasks.get(subtask.getId());
+        priorityTask.remove(oldSubtask);
         if (isTimeTaskFree(subtask)) {
             Epic epic = epics.get(subtask.getEpicId());
-            epic.epicSubtasks.remove(getSubtaskById(subtask.getId()));
+            epic.epicSubtasks.remove(oldSubtask);
             epic.epicSubtasks.add(subtask);
-            epic.setParameters(epic);
+            epic.updateDataEpic(epic);
             priorityTask.add(subtask);
             epics.put(epic.getId(), epic);
             subtasks.put(subtask.getId(), subtask);
+            return subtask;
         } else {
+            priorityTask.add(oldSubtask);
             System.out.println("Время начала задачи не удовлетворяет условиям");
+            return null;
         }
     }
 
@@ -213,7 +232,7 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(subtask.getEpicId());
         epic.epicSubtasks.remove(subtask);
         subtasks.remove(id);
-        epic.setParameters(epic);
+        epic.updateDataEpic(epic);
         epics.put(epic.getId(), epic);
         historyManager.removeNode(id);
     }
@@ -252,5 +271,4 @@ public class InMemoryTaskManager implements TaskManager {
                 .filter(task -> !task.getEndTime().isBefore(newTask.getStartTime()))
                 .noneMatch(task -> task.getStartTime().isBefore(newTask.getEndTime()));
     }
-
 }

@@ -75,6 +75,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
+    public Map<Integer, Task> getMapTasks() {
+        return super.getMapTasks();
+    }
+
+    @Override
     public void clearTasks() {
         super.clearTasks();
         save();
@@ -88,9 +93,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateTask(Task task) {
-        super.updateTask(task);
+    public Task updateTask(Task task) {
+        Task taskUpdate = super.updateTask(task);
         save();
+        return taskUpdate;
     }
 
     @Override
@@ -112,6 +118,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
+    public Map<Integer, Epic> getMapEpics() {
+        return super.getMapEpics();
+    }
+
+    @Override
     public void clearEpics() {
         super.clearEpics();
         save();
@@ -125,9 +136,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateEpic(Epic epic) {
-        super.updateEpic(epic);
+    public Epic updateEpic(Epic epic) {
+        Epic updateEpic = super.updateEpic(epic);
         save();
+        return updateEpic;
     }
 
     @Override
@@ -149,6 +161,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
+    public Map<Integer, Subtask> getMapSubtasks() {
+        return super.getMapSubtasks();
+    }
+
+    @Override
     public void clearSubtasks() {
         super.clearSubtasks();
         save();
@@ -162,9 +179,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
-        super.updateSubtask(subtask);
+    public Subtask updateSubtask(Subtask subtask) {
+        Subtask updateSubtask = super.updateSubtask(subtask);
         save();
+        return updateSubtask;
     }
 
     @Override
@@ -288,7 +306,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
         for (Subtask subtask : subtasks.values()) {
             epics.get(subtask.getEpicId()).epicSubtasks.add(subtask);
-            epics.get(subtask.getEpicId()).setParameters(epics.get(subtask.getEpicId()));
+            epics.get(subtask.getEpicId()).updateDataEpic(epics.get(subtask.getEpicId()));
         }
         List<Integer> historyId = historyFromString(dataFromFile);
         for (Integer id : historyId) {

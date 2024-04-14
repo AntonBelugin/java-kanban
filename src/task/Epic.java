@@ -6,7 +6,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
+
     public List<Subtask> epicSubtasks;
+
+    public LocalDateTime endTime;
+
+    public Epic(String name, String description) {
+        super(name, description);
+        epicSubtasks = new ArrayList<>();
+        this.startTime = LocalDateTime.now();
+        this.duration = Duration.ofMinutes(0);
+        this.endTime = startTime;
+    }
+
+    public Epic(int id, String name, String description, TaskStatus status,
+                LocalDateTime startTime, Duration duration, LocalDateTime endTime) {
+        super(name, description);
+        epicSubtasks = new ArrayList<>();
+        this.startTime = LocalDateTime.now();
+        this.duration = Duration.ofMinutes(0);
+    }
 
     @Override
     public LocalDateTime getStartTime() {
@@ -16,15 +35,6 @@ public class Epic extends Task {
     @Override
     public Duration getDuration() {
         return duration;
-    }
-
-    public LocalDateTime endTime;
-
-    public Epic(String name, String description) {
-        super(name, description);
-        epicSubtasks = new ArrayList<>();
-        this.startTime = LocalDateTime.now();
-        this.duration = Duration.ofMinutes(0);
     }
 
     @Override
@@ -51,13 +61,13 @@ public class Epic extends Task {
         return TaskType.EPIC;
     }
 
-    public void setParameters(Epic epic) {
+    public void updateDataEpic(Epic epic) {
         List<Subtask> subtasksEpic = epic.epicSubtasks;
         if (subtasksEpic.isEmpty()) {
             epic.setTaskStatus(TaskStatus.NEW);
-            epic.endTime = null;
-            epic.startTime = null;
-            epic.duration = null;
+            epic.endTime = LocalDateTime.now();
+            epic.startTime = LocalDateTime.now();
+            epic.duration = Duration.ofMinutes(0);
         } else {
             int statusNew = 0;
             int statusDone = 0;

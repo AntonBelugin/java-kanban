@@ -6,14 +6,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task implements Comparable<Task> {
-    protected Duration duration;
-    protected LocalDateTime startTime;
     protected int id;
     protected int epicId;
     public String name;
     public String description;
+    protected LocalDateTime startTime;
+    protected Duration duration;
     protected TaskStatus taskStatus;
-    protected DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     public Task(String name, String description) {
         this.name = name;
@@ -21,8 +20,28 @@ public class Task implements Comparable<Task> {
     }
 
     public Task(String name, String description, String startTime, int duration) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         this.name = name;
         this.description = description;
+        this.startTime = LocalDateTime.parse(startTime, inputFormatter);
+        this.duration = Duration.ofMinutes(duration);
+    }
+
+    public Task(int id, String name, String description, String startTime, int duration) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.startTime = LocalDateTime.parse(startTime, inputFormatter);
+        this.duration = Duration.ofMinutes(duration);
+    }
+
+    public Task(int id, String name, String description, TaskStatus taskStatus, String startTime, int duration) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.taskStatus = taskStatus;
         this.startTime = LocalDateTime.parse(startTime, inputFormatter);
         this.duration = Duration.ofMinutes(duration);
     }
@@ -74,7 +93,7 @@ public class Task implements Comparable<Task> {
         return TaskType.TASK;
     }
 
-    public Integer getEpicId() {
+   public Integer getEpicId() {
         if (getTaskType() == TaskType.SUBTASK) {
             return epicId;
         } else {

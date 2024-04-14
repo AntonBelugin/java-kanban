@@ -5,6 +5,7 @@ import task.Subtask;
 import task.Task;
 
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 public interface TaskManager {
@@ -12,11 +13,13 @@ public interface TaskManager {
 
     List<Task> getTasks();
 
+    Map<Integer, Task> getMapTasks();
+
     void clearTasks();
 
     Task getTaskById(int id);
 
-    void updateTask(Task task);
+    Task updateTask(Task task);
 
     void deleteTask(int id);
 
@@ -25,11 +28,13 @@ public interface TaskManager {
 
     List<Epic> getEpics();
 
+    Map<Integer, Epic> getMapEpics();
+
     void clearEpics();
 
     Epic getEpicById(int id);
 
-    void updateEpic(Epic epic);
+    Epic updateEpic(Epic epic);
 
     void deleteEpic(int id);
 
@@ -38,11 +43,13 @@ public interface TaskManager {
 
     List<Subtask> getSubtasks();
 
+    Map<Integer, Subtask> getMapSubtasks();
+
     void clearSubtasks();
 
     Subtask getSubtaskById(int id);
 
-    void updateSubtask(Subtask subtask);
+    Subtask updateSubtask(Subtask subtask);
 
     void deleteSubtask(int id);
 
