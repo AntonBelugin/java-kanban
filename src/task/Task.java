@@ -36,6 +36,16 @@ public class Task implements Comparable<Task> {
         this.duration = Duration.ofMinutes(duration);
     }
 
+    public Task(int id, String name, String description, TaskStatus taskStatus, String startTime, int duration) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.taskStatus = taskStatus;
+        this.startTime = LocalDateTime.parse(startTime, inputFormatter);
+        this.duration = Duration.ofMinutes(duration);
+    }
+
     @Override
     public String toString() {
         return "Задача №: " + id +

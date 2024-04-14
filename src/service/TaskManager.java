@@ -11,7 +11,9 @@ import java.util.TreeSet;
 public interface TaskManager {
     Task makeTask(Task task);
 
-    Map<Integer, Task> getTasks();
+    List<Task> getTasks();
+
+    Map<Integer, Task> getMapTasks();
 
     void clearTasks();
 
@@ -24,7 +26,9 @@ public interface TaskManager {
     // Методы для Epic
     Epic makeEpic(Epic epic);
 
-    Map<Integer, Epic> getEpics();
+    List<Epic> getEpics();
+
+    Map<Integer, Epic> getMapEpics();
 
     void clearEpics();
 
@@ -37,7 +41,9 @@ public interface TaskManager {
     // Методы для Task.Subtask
     Subtask makeSubtask(Subtask subtask);
 
-    Map<Integer, Subtask> getSubtasks();
+    List<Subtask> getSubtasks();
+
+    Map<Integer, Subtask> getMapSubtasks();
 
     void clearSubtasks();
 

@@ -61,7 +61,7 @@ public class Epic extends Task {
         return TaskType.EPIC;
     }
 
-    public void setParameters(Epic epic) {
+    public void updateDataEpic(Epic epic) {
         List<Subtask> subtasksEpic = epic.epicSubtasks;
         if (subtasksEpic.isEmpty()) {
             epic.setTaskStatus(TaskStatus.NEW);

@@ -70,8 +70,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Map<Integer, Task> getTasks() {
+    public List<Task> getTasks() {
         return super.getTasks();
+    }
+
+    @Override
+    public Map<Integer, Task> getMapTasks() {
+        return super.getMapTasks();
     }
 
     @Override
@@ -108,8 +113,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Map<Integer, Epic> getEpics() {
+    public List<Epic> getEpics() {
         return super.getEpics();
+    }
+
+    @Override
+    public Map<Integer, Epic> getMapEpics() {
+        return super.getMapEpics();
     }
 
     @Override
@@ -146,8 +156,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Map<Integer, Subtask> getSubtasks() {
+    public List<Subtask> getSubtasks() {
         return super.getSubtasks();
+    }
+
+    @Override
+    public Map<Integer, Subtask> getMapSubtasks() {
+        return super.getMapSubtasks();
     }
 
     @Override
@@ -291,7 +306,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
         for (Subtask subtask : subtasks.values()) {
             epics.get(subtask.getEpicId()).epicSubtasks.add(subtask);
-            epics.get(subtask.getEpicId()).setParameters(epics.get(subtask.getEpicId()));
+            epics.get(subtask.getEpicId()).updateDataEpic(epics.get(subtask.getEpicId()));
         }
         List<Integer> historyId = historyFromString(dataFromFile);
         for (Integer id : historyId) {

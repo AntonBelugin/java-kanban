@@ -2,12 +2,11 @@ package service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import convertors.DurationAdapter;
+import convertors.LocalDateTimeAdapter;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -20,7 +19,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class HttpTaskServer {
@@ -28,11 +26,11 @@ public class HttpTaskServer {
 
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-    TaskManager taskManager;
+    private static TaskManager taskManager;
 
-    HttpServer server;
+    private HttpServer server;
 
-    Gson gson;
+    private Gson gson;
 
     public HttpTaskServer(TaskManager taskManager) {
         this.taskManager = taskManager;
@@ -54,13 +52,36 @@ public class HttpTaskServer {
     public void start() {
         server.start();
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
+
+    }
+
+    public void stop() {
+        server.stop(0);
+    }
+
+    public Gson gsonCreate() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.serializeNulls();
+        gsonBuilder.registerTypeAdapter(Duration.class, new DurationAdapter());
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
+        gsonBuilder.setPrettyPrinting();
+        return gsonBuilder.create();
+    }
+
+    public static void main(String[] args)  {
+
+        File file = new File("resources/task.csv");
+        TaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
+        HttpTaskServer taskServer = new HttpTaskServer(fileBackedTaskManager);
+        taskServer.start();
+
         taskManager.makeTask(new Task("Помыть посуду",
                 "помыть посуду горячей водой", "12.12.2023 20:00", 40));
 
         taskManager.makeEpic(new Epic("Переезд",
                 "Переехать в другую квартиру"));
 
-       taskManager.makeSubtask(new Subtask(2, "Собрать коробки",
+        taskManager.makeSubtask(new Subtask(2, "Собрать коробки",
                 "собрать в коробки вещи", "12.12.2023 15:00", 30));
 
         taskManager.makeSubtask(new Subtask(2, "Собрать коробки2",
@@ -73,26 +94,6 @@ public class HttpTaskServer {
                 "Переехать в другую квартиру3"));
     }
 
-    public void stop() {
-        server.stop(1);
-    }
-
-    public Gson gsonCreate() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.serializeNulls();
-        gsonBuilder.registerTypeAdapter(Duration.class, new DurationAdapter());
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
-        return gsonBuilder.create();
-    }
-
-    public static void main(String[] args)  {
-
-        File file = new File("resources/task.csv");
-        TaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        HttpTaskServer taskServer = new HttpTaskServer(fileBackedTaskManager);
-        taskServer.start();
-    }
-
      class TasksHandler implements HttpHandler {
          TaskManager taskManager;
 
@@ -101,19 +102,19 @@ public class HttpTaskServer {
          }
 
          @Override
-         public void handle(HttpExchange exchange) throws IOException {
+         public void handle(HttpExchange exchange) {
              try {
                  String endpoint = exchange.getRequestMethod();
-                 switch (endpoint) {
-                     case "GET": {
+                 switch (endpoint.toLowerCase()) {
+                     case "get": {
                          getTasks(exchange);
                          break;
                      }
-                     case "POST": {
+                     case "post": {
                          postTasks(exchange);
                          break;
                      }
-                     case "DELETE": {
+                     case "delete": {
                          deleteTasks(exchange);
                          break;
                      }
@@ -122,7 +123,7 @@ public class HttpTaskServer {
                                  "Такого эндпоинта не существует" + endpoint, 404);
                  }
              } catch (IOException e) {
-                 throw new IOException();
+                 throw new RuntimeException(e);
              }
 
          }
@@ -137,7 +138,7 @@ public class HttpTaskServer {
                      writeResponse(exchange, "Такой задачи нет", 404);
                  } else {
                      int taskId = taskIdOpt.get();
-                     if (taskManager.getTasks().get(taskId) != null) {
+                     if (taskManager.getMapTasks().get(taskId) != null) {
                          writeResponse(exchange, gson.toJson(taskManager.getTaskById(taskId)), 200);
                      } else {
                          writeResponse(exchange, "Такой задачи нет", 404);
@@ -150,20 +151,22 @@ public class HttpTaskServer {
              InputStream inputStream = exchange.getRequestBody();
              String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
              Task task = gson.fromJson(body, Task.class);
-             if (task.getId() != 0) {
+             if ((task.getId() != 0) && (taskManager.getMapTasks().get(task.getId()) != null)) {
                  if (taskManager.updateTask(task) != null) {
                      writeResponse(exchange, "Задача обновлена", 200);
                  } else {
                      writeResponse(exchange, "Задача не обновлена. " +
                              "Задача пересекается с существующими", 406);
                  }
-             } else {
+             } else  if (task.getId() == 0) {
                  if (taskManager.makeTask(task) != null) {
                      writeResponse(exchange, "Задача создана", 201);
                  } else {
                      writeResponse(exchange, "Задача не создана. " +
                              "Задача пересекается с существующими", 406);
                  }
+             } else {
+                 writeResponse(exchange, "Неверно указан номер задачи ", 406);
              }
          }
 
@@ -178,7 +181,7 @@ public class HttpTaskServer {
                      writeResponse(exchange, "Такой задачи нет", 404);
                  } else {
                      int taskId = taskIdOpt.get();
-                     if (taskManager.getTasks().get(taskId) != null) {
+                     if (taskManager.getMapTasks().get(taskId) != null) {
                          taskManager.deleteTask(taskId);
                          writeResponse(exchange, "Задача удалена", 204);
                      } else {
@@ -197,19 +200,19 @@ public class HttpTaskServer {
         }
 
         @Override
-        public void handle(HttpExchange exchange) throws IOException {
+        public void handle(HttpExchange exchange) {
             try {
                 String endpoint = exchange.getRequestMethod();
-                switch (endpoint) {
-                    case "GET": {
+                switch (endpoint.toLowerCase()) {
+                    case "get": {
                         getEpics(exchange);
                         break;
                     }
-                    case "POST": {
+                    case "post": {
                         postEpics(exchange);
                         break;
                     }
-                    case "DELETE": {
+                    case "delete": {
                         deleteEpics(exchange);
                         break;
                     }
@@ -218,7 +221,7 @@ public class HttpTaskServer {
                                 "Такого эндпоинта не существует" + endpoint, 404);
                 }
             } catch (IOException e) {
-                throw new IOException();
+                throw new RuntimeException(e);
             }
         }
 
@@ -232,7 +235,7 @@ public class HttpTaskServer {
                     writeResponse(exchange, "Такого эпика нет", 404);
                 } else {
                     int taskId = taskIdOpt.get();
-                    if (taskManager.getEpics().get(taskId) != null) {
+                    if (taskManager.getMapEpics().get(taskId) != null) {
                         if (pathParts.length < 4) {
                             writeResponse(exchange, gson.toJson(taskManager.getEpicById(taskId)), 200);
                         } else if (pathParts[3].equals("subtasks")) {
@@ -270,7 +273,7 @@ public class HttpTaskServer {
                     writeResponse(exchange, "Такого эпика нет", 404);
                 } else {
                     int taskId = taskIdOpt.get();
-                    if (taskManager.getEpics().get(taskId) != null) {
+                    if (taskManager.getMapEpics().get(taskId) != null) {
                         taskManager.deleteEpic(taskId);
                         writeResponse(exchange, "Эпик удален", 200);
                     } else {
@@ -289,19 +292,19 @@ public class HttpTaskServer {
         }
 
         @Override
-        public void handle(HttpExchange exchange) throws IOException {
+        public void handle(HttpExchange exchange) {
             try {
                 String endpoint = exchange.getRequestMethod();
-                switch (endpoint) {
-                    case "GET": {
+                switch (endpoint.toLowerCase()) {
+                    case "get": {
                         getSubtasks(exchange);
                         break;
                     }
-                    case "POST": {
+                    case "post": {
                         postSubtasks(exchange);
                         break;
                     }
-                    case "DELETE": {
+                    case "delete": {
                         deleteSubtasks(exchange);
                         break;
                     }
@@ -310,7 +313,7 @@ public class HttpTaskServer {
                                 "Такого эндпоинта не существует" + endpoint, 404);
                 }
             } catch (IOException e) {
-                throw new IOException();
+                throw new RuntimeException(e);
             }
 
         }
@@ -325,7 +328,7 @@ public class HttpTaskServer {
                     writeResponse(exchange, "Такой субзадачи нет", 404);
                 } else {
                     int taskId = taskIdOpt.get();
-                    if (taskManager.getSubtasks().get(taskId) != null) {
+                    if (taskManager.getMapSubtasks().get(taskId) != null) {
                         writeResponse(exchange, gson.toJson(taskManager.getSubtaskById(taskId)), 200);
                     } else {
                         writeResponse(exchange, "Такой субзадачи нет", 404);
@@ -338,20 +341,22 @@ public class HttpTaskServer {
             InputStream inputStream = exchange.getRequestBody();
             String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
             Subtask subtask = gson.fromJson(body, Subtask.class);
-            if (subtask.getId() != 0) {
+            if ((subtask.getId() != 0) && (taskManager.getMapSubtasks().get(subtask.getId()) != null)) {
                 if (taskManager.updateSubtask(subtask) != null) {
                     writeResponse(exchange, "СубЗадача обновлена", 201);
                 } else {
                     writeResponse(exchange, "СубЗадача не обновлена. " +
                             "СубЗадача пересекается с существующими", 406);
                 }
-            } else {
+            } else if ((subtask.getId() == 0)) {
                 if (taskManager.makeSubtask(subtask) != null) {
                     writeResponse(exchange, "СубЗадача создана", 201);
                 } else {
                     writeResponse(exchange, "СубЗадача не создана. " +
                             "СубЗадача пересекается с существующими", 406);
                 }
+            } else {
+                writeResponse(exchange, "Неверно указан номер СубЗадачи", 406);
             }
         }
 
@@ -365,7 +370,7 @@ public class HttpTaskServer {
                     writeResponse(exchange, "Такой СубЗадачи нет", 404);
                 } else {
                     int taskId = taskIdOpt.get();
-                    if (taskManager.getSubtasks().get(taskId) != null) {
+                    if (taskManager.getMapSubtasks().get(taskId) != null) {
                         taskManager.deleteSubtask(taskId);
                         writeResponse(exchange, "СубЗадача удалена", 200);
                     } else {
@@ -384,17 +389,17 @@ public class HttpTaskServer {
         }
 
         @Override
-        public void handle(HttpExchange exchange) throws IOException {
+        public void handle(HttpExchange exchange) {
             try {
                 String endpoint = exchange.getRequestMethod();
-                if (endpoint.equals("GET")) {
+                if (endpoint.equalsIgnoreCase("get")) {
                     getHistory(exchange);
                 } else {
                     writeResponse(exchange,
                             "Такого эндпоинта не существует" + endpoint, 404);
                 }
             } catch (IOException e) {
-                throw new IOException();
+                throw new RuntimeException(e);
             }
 
         }
@@ -417,17 +422,17 @@ public class HttpTaskServer {
         }
 
         @Override
-        public void handle(HttpExchange exchange) throws IOException {
+        public void handle(HttpExchange exchange) {
             try {
                 String endpoint = exchange.getRequestMethod();
-                if (endpoint.equals("GET")) {
+                if (endpoint.equalsIgnoreCase("get")) {
                     getPrioritized(exchange);
                 } else {
                     writeResponse(exchange,
                             "Такого эндпоинта не существует" + endpoint, 404);
                 }
             } catch (IOException e) {
-                throw new IOException();
+                throw new RuntimeException(e);
             }
         }
 
@@ -456,35 +461,10 @@ public class HttpTaskServer {
         try (OutputStream os = exchange.getResponseBody()) {
             exchange.sendResponseHeaders(responseCode, 0);
             os.write(responseString.getBytes(DEFAULT_CHARSET));
+            System.out.println(responseCode + "/n" + responseString);
+        } catch (IOException e) {
+            exchange.sendResponseHeaders(500, 0);
         }
         exchange.close();
-    }
-
-    public static class DurationAdapter extends TypeAdapter<Duration> {
-
-        @Override
-        public void write(final JsonWriter jsonWriter, final Duration duration) throws IOException {
-            jsonWriter.value(duration.toMinutes());
-        }
-
-        @Override
-        public Duration read(final JsonReader jsonReader) throws IOException {
-            return Duration.ofMinutes(Integer.parseInt(jsonReader.nextString()));
-        }
-    }
-
-    public static class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
-
-        private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-
-        @Override
-        public void write(JsonWriter jsonWriter, LocalDateTime localDateTime) throws IOException {
-            jsonWriter.value(localDateTime.format(dtf));
-        }
-
-        @Override
-        public LocalDateTime read(final JsonReader jsonReader) throws IOException {
-            return LocalDateTime.parse(jsonReader.nextString(), dtf);
-        }
     }
 }
